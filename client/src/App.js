@@ -1,31 +1,32 @@
-
 import './App.css';
-import axios from 'axios'
-
+import RequireAuth from './components/RequireAuth';
+import Unauthorized from './components/Unauthorized';
+import {Route, Routes } from 'react-router-dom';
+import Layout from "./components/Layout";
+import Profile from './components/Profile';
+import Admin from './components/Admin';
+import Landing from './components/Landing';
+import NotFound from './components/NotFound';
 
 function App() {
 
-  const cookieTest = async e => {
-    e.preventDefault();
-    try {
-      const body = 'test';
-      const response = await axios.post('/users', body, {withCredentials: true})
-      localStorage.setItem("test", "test");
-      console.log('success!')
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
   return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Landing/>} />
+      <Route path="unauthorized" element={<Unauthorized />} />
 
-
-
-    <div className="App">
-      <header className="App-header">
-        <button onClick={cookieTest}>Cookietest</button>
-      </header>
-    </div>
+        <Route element ={<RequireAuth/>}>
+          <Route path="/users">
+            <Route index element={<Profile />} />
+          </Route>
+          <Route path="/Admin">
+            <Route index element={<Admin />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   );
 }
 

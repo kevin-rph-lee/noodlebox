@@ -4,12 +4,9 @@ const usersController = require('../controllers/usersController')
 
 module.exports = () => {
 
-  router.post("/", (req, res) => {
-    usersController.test(req,res)
+  router.post("/login", (req, res) => {
+    usersController.loginUser(req,res)
   });
-
-
-
  
   return router;
 };
