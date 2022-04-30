@@ -22,9 +22,6 @@ app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json()); // => allows us to access the req.body
 
-// app.use(express.static(path.join(__dirname, "client/build")));
-// app.use(express.static("./client/build")); => for demonstration
-
 if (process.env.NODE_ENV === "production") {
   //server static content
   //npm run build
@@ -34,12 +31,11 @@ if (process.env.NODE_ENV === "production") {
 console.log(__dirname);
 console.log(path.join(__dirname, "client/build"));
 
+// Separated Routes for each Resource
+const usersRoutes = require("./routes/users");
 
-
-
-// const usersRoutes = require("./routes/users");
-
-// app.use("/users", usersRoutes(db));
+// Resource routes
+app.use("/users", usersRoutes());
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
