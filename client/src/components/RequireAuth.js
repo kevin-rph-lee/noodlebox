@@ -9,9 +9,10 @@ const RequireAuth = ({allowedRoles}) => {
     //allowed roles is an array passed into it
     //seeing of allowed roles array includes
 
-
+    
+   
     return (
-        auth?.roles?.find(role => allowedRoles?.includes(role))
+        allowedRoles.includes(auth.role)
             ? <Outlet />
             : <Navigate to="/unauthorized" state={{ from: location }} replace />
     );

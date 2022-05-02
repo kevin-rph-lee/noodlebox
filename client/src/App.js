@@ -16,14 +16,18 @@ function App() {
         <Route index element={<Landing/>} />
       <Route path="unauthorized" element={<Unauthorized />} />
 
-        <Route element ={<RequireAuth/>}>
+        <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
           <Route path="/users">
             <Route index element={<Profile />} />
           </Route>
-          <Route path="/Admin">
+        </Route>
+
+        <Route element ={<RequireAuth allowedRoles={['admin']}/>}>
+          <Route path="/admin">
             <Route index element={<Admin />} />
           </Route>
         </Route>
+
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
