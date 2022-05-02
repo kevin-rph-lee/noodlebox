@@ -10,13 +10,11 @@ const RequireAuth = ({allowedRoles}) => {
     //seeing of allowed roles array includes
 
 
-    if(auth){
-        console.log('Logged in!')
-        return <Outlet />
-    } else {
-        console.log('No Login')
-        return <Navigate to="/unauthorized" state={{ from: location }} replace />
-    }
+    return (
+        auth?.roles?.find(role => allowedRoles?.includes(role))
+            ? <Outlet />
+            : <Navigate to="/unauthorized" state={{ from: location }} replace />
+    );
 }
 
 export default RequireAuth;

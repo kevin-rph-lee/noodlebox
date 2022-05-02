@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const corsOptions = require('./config/corsOptions');
+const credentials = require('./middleware/credentials');
+const cookieParser = require('cookie-parser');
 
 // PG database client/connection setup
 const { Pool } = require('pg');
@@ -19,8 +22,13 @@ db.connect();
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use(morgan("dev"));
 
-app.use(cors());
+app.use(credentials);
+
+app.use(cors(corsOptions));
 app.use(express.json()); // => allows us to access the req.body
+
+//middleware for cookies
+app.use(cookieParser());
 
 if (process.env.NODE_ENV === "production") {
   //server static content
@@ -32,10 +40,13 @@ console.log(__dirname);
 console.log(path.join(__dirname, "client/build"));
 
 // Separated Routes for each Resource
-const usersRoutes = require("./routes/users");
+const usersRoutes = require('./routes/users');
+const refreshRoutes = require('./routes/refresh');
 
 // Resource routes
 app.use("/users", usersRoutes());
+app.use("/refresh", refreshRoutes());
+
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {

@@ -11,7 +11,7 @@ function validateEmail (email) {
 }
 
 updateRefreshToken = (refreshToken, userID) =>{
-  let SQLStringUpdateRefreshToken = `UPDATE users SET refreshtoken = $1 where id = $2;`
+  let SQLStringUpdateRefreshToken = `UPDATE users SET refresh_token = $1 where id = $2;`
   let valuesUpdateRefreshToken =  [refreshToken, userID]
   db.query(SQLStringUpdateRefreshToken, valuesUpdateRefreshToken)
   .then(data => {
@@ -23,12 +23,12 @@ updateRefreshToken = (refreshToken, userID) =>{
 
 const getUser = async (req, res) => {
 
-    let SQLStringGetUser = `SELECT refreshtoken FROM users WHERE id = $1;`
-    let valuesGetUser =  [1]
+    let userID = req.body.userID
+    let SQLStringGetUser = `SELECT * FROM users WHERE id = $1;`
+    let valuesGetUser =  [userID]
 
     db.query(SQLStringGetUser, valuesGetUser)
     .then(data => {
-      console.log(data)
       res.json(data.rows[0])
     })
     .catch(err => {
@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
   }
 
   //Query strings for DB
-  let SQLStringCheckUser = `SELECT * FROM users WHERE username = $1;`
+  let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
   let valuesCheckUser =  [username]
 
   //Checks if the user exists, if it does, checks if password is correct. If correct, sets a cookie session in the browser and logs the user in. 
@@ -75,13 +75,13 @@ const loginUser = async (req, res) => {
       } else if(bcrypt.compareSync(password, data['rows'][0]['password'])){
         console.log('Login Successful')
         const userID = data['rows'][0]['id']
-        const userName = data['rows'][0]['username']
+        const userName = data['rows'][0]['user_name']
         const role = data['rows'][0]['role']
 
         const accessToken = jwt.sign(
           {
             "userID": userID,
-            "username": userName,
+            "userName": userName,
             "role": role
           },
           process.env.ACCESS_TOKEN_SECRET,
@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
         );
 
         const refreshToken = jwt.sign(
-          { "username": data['rows'][0]['username'] },
+          { "userName": data['rows'][0]['user_name'] },
           process.env.REFRESH_TOKEN_SECRET,
           { expiresIn: '1d' }
         );
@@ -98,7 +98,7 @@ const loginUser = async (req, res) => {
  
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
 
-        res.json({ role, accessToken });
+        res.json({role, accessToken });
       } else if(!bcrypt.compareSync(password, data['rows'][0]['password'])){
         console.log('Invalid username or password!')
         res.status(500).send('Invalid username or password!')
@@ -116,8 +116,14 @@ const loginUser = async (req, res) => {
     });
 }
 
+const logoutUser = async (req, res) => {
+  console.log(req.cookies)
+    res.sendStatus(204)
+}
+
 
 module.exports = {
     getUser,
-    loginUser
+    loginUser,
+    logoutUser
 }

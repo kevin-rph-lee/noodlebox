@@ -9,7 +9,7 @@ const db = new Pool(dbParams);
 
 db.connect();
 
-let SQLStringInsertUsersSeed = `INSERT INTO users(username, password, role, refreshToken) 
+let SQLStringInsertUsersSeed = `INSERT INTO users(user_name, password, role, refresh_token) 
                             VALUES($1, $2, $3, $4), ($5, $6, $7, $8), ($9, $10, $11, $12), ($13, $14, $15, $16);`
 
 //Creating 4 users from the env file

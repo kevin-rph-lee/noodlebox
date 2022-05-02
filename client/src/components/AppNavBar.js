@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const AppNavBar = () => {
 
   //Store auth state and store it in the global context
-  const { setAuth } = useAuth()
+  const { setAuth, auth } = useAuth()
   
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
   const handleCloseRegistrationForm = () => setShowRegistrationForm(false);
@@ -36,10 +36,11 @@ const AppNavBar = () => {
 
     try {
 
-      const resp = await axios.post(
+      const resp = await axios.get(
         '/refresh',
         { params: { userId: null }, headers: { 'Content-Type': 'application/json'  }, withCredentials: true  }
       )
+      console.log(resp.data)
       return resp.data
 
     } catch (err) {
@@ -69,7 +70,12 @@ const AppNavBar = () => {
 
   const handleLogoutSubmit = async (e) => {
     e.preventDefault()
-
+    try {
+      await axios.post('/users/logout', {userName: auth.userName}, {withCredentials: true})
+      setAuth({});
+    } catch (err) {
+      toast.error(`Error! ${err.response.data}`, {theme: "colored"})
+    }
   }
 
 

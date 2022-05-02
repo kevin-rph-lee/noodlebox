@@ -3,8 +3,8 @@
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
   id SERIAL PRIMARY KEY NOT NULL,
-  username VARCHAR(255) NOT NULL,
+  user_name VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(255) NOT NULL,
-  refreshToken VARCHAR(255) 
+  refresh_token VARCHAR(255) 
 );
