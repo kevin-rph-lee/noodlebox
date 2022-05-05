@@ -6,18 +6,15 @@ const verifyJWT = require('../middleware/verifyJWT')
 module.exports = () => {
 
   router.route('/')
-    .get(verifyJWT, usersController.getUser)
-
+    .get(verifyJWT, usersController.getUsers)
 
   router.post("/login", (req, res) => {
     usersController.loginUser(req,res)
   });
 
-
   router.post("/logout", (req, res) => {
     usersController.logoutUser(req,res)
   });
- 
  
   return router;
 };

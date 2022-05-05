@@ -35,21 +35,37 @@ const AppNavBar = () => {
 
   const handleRegistrationSubmit = async (e) => {
     console.log(auth)
-    // e.preventDefault();
+    e.preventDefault();
 
-    // try {
+    try {
 
-    //   const resp = await axios.get(
-    //     '/refresh',
-    //     { params: { userId: null }, headers: { 'Content-Type': 'application/json'  }, withCredentials: true  }
-    //   )
-    //   console.log(resp.data)
-    //   return resp.data
+      const resp = await axios.get(
+        '/refresh',
+        { params: { userId: null }, headers: { 'Content-Type': 'application/json'  }, withCredentials: true  }
+      )
+      console.log(resp.data)
+      return resp.data
 
-    // } catch (err) {
-    // }
+    } catch (err) {
+      
+    }
   }
 
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
+    try {
+
+      const resp = await axios.post(
+        '/users/logout',
+        { params: { userId: null }, headers: { 'Content-Type': 'application/json'  }, withCredentials: true  }
+      )
+      console.log(resp.data)
+      return resp.data
+
+    } catch (err) {
+    }
+  }
 
 
   const handleLoginSubmit = async (e) => {
@@ -99,6 +115,7 @@ const AppNavBar = () => {
               <Nav className="justify-content-end flex-grow-1 pe-3">
                 <Nav.Link onClick={handleShowRegistrationForm}>Register</Nav.Link>
                 <Nav.Link onClick={handleShowLoginForm}>Login</Nav.Link>
+                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                 <Link to="/">Landing</Link>
                 <Link to="/users">Profile</Link>
                 <Link to="/admin">Admin</Link>

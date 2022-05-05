@@ -21,15 +21,14 @@ updateRefreshToken = (refreshToken, userID) =>{
 }
 
 
-const getUser = async (req, res) => {
+const getUsers = async (req, res) => {
 
     let userID = req.body.userID
-    let SQLStringGetUser = `SELECT * FROM users WHERE id = $1;`
-    let valuesGetUser =  [userID]
+    let SQLStringGetUser = `SELECT id, user_name, role FROM users;`
 
-    db.query(SQLStringGetUser, valuesGetUser)
+    db.query(SQLStringGetUser)
     .then(data => {
-      res.json(data.rows[0])
+      res.json(data.rows)
     })
     .catch(err => {
       res
@@ -117,13 +116,24 @@ const loginUser = async (req, res) => {
 }
 
 const logoutUser = async (req, res) => {
-  console.log(req.cookies)
-    res.sendStatus(204)
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204); //No content
+  const refreshToken = cookies.jwt;
+  let SQLStringUpdateRefreshToken = `UPDATE SET refreshToken = NULL FROM users WHERE refreshToken = $1;`
+  let updateRefreshTokenValues =  [refreshToken]
+  try{
+    await db.query(SQLStringUpdateRefreshToken, updateRefreshTokenValues)
+    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+    res.sendStatus(204);
+  } catch {
+    console.log('Cannot find refresh token!')
+    res.sendStatus(500)
+  }
 }
 
 
 module.exports = {
-    getUser,
+    getUsers,
     loginUser,
     logoutUser
 }

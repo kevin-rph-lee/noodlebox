@@ -30,12 +30,14 @@ const handleRefreshToken = (req, res) => {
                     {
                         "userID": data['rows'][0]['id'],
                         "userName": data['rows'][0]['user_name'],
-                        "role": data['rows'][0]['rows']
+                        "role": data['rows'][0]['role']
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     { expiresIn: '900s' }
                 );
-                res.json({ accessToken })
+                const role = data['rows'][0]['role']
+                console.log('creating new access token!')
+                res.json({ accessToken, role })
             }
         );
     })
