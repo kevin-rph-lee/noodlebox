@@ -4,7 +4,7 @@ const allowedOrigins = [
     'http://localhost:3500',
     'http://localhost:3000',
     'http://localhost:3001',
-    'pacific-springs-01105.herokuapp.com'
+    'https://pacific-springs-01105.herokuapp.com'
 ];
 
 module.exports = allowedOrigins;
