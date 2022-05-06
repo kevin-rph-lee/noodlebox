@@ -11,7 +11,8 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
-// PG database client/connection setup
+// PG database client/connection setupKelly Brook
+
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
