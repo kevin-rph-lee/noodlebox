@@ -119,14 +119,14 @@ const logoutUser = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204); //No content
   const refreshToken = cookies.jwt;
-  let SQLStringUpdateRefreshToken = `UPDATE SET refreshToken = NULL FROM users WHERE refreshToken = $1;`
+  let SQLStringUpdateRefreshToken = `UPDATE users SET refresh_token  = NULL WHERE refresh_token = $1;`
   let updateRefreshTokenValues =  [refreshToken]
   try{
     await db.query(SQLStringUpdateRefreshToken, updateRefreshTokenValues)
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
     res.sendStatus(204);
-  } catch {
-    console.log('Cannot find refresh token!')
+  } catch (err) {
+    console.log('Error updating refresh token to NULL! ' + err)
     res.sendStatus(500)
   }
 }

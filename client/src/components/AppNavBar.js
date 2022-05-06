@@ -2,7 +2,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Container from 'react-bootstrap/Container'
-import Offcanvas from 'react-bootstrap/Offcanvas'
 import Modal from 'react-bootstrap/Modal'
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button'
@@ -11,7 +10,10 @@ import axios from 'axios'
 import useAuth from '../hooks/useAuth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGear } from '@fortawesome/free-solid-svg-icons'
+import NavDropdown from 'react-bootstrap/NavDropdown'
 
 const AppNavBar = () => {
 
@@ -30,11 +32,12 @@ const AppNavBar = () => {
   const handleCloseLoginForm = () => setShowLoginForm(false);
   const handleShowLoginForm = () => setShowLoginForm(true);
 
+  const navigate = useNavigate()
 
 
 
   const handleRegistrationSubmit = async (e) => {
-    console.log(auth)
+
     e.preventDefault();
 
     try {
@@ -60,10 +63,11 @@ const AppNavBar = () => {
         '/users/logout',
         { params: { userId: null }, headers: { 'Content-Type': 'application/json'  }, withCredentials: true  }
       )
-      console.log(resp.data)
-      return resp.data
+      setAuth({})
+      navigate('/')
 
     } catch (err) {
+      console.log('Error! ' + err)
     }
   }
 
@@ -75,6 +79,9 @@ const AppNavBar = () => {
       const response =await axios.post('/users/login', {username: loginUsername, password: loginPassword}, {withCredentials: true})
       const responseData= response.data
       setAuth(responseData)
+      toast.success('Logged in successfully', {theme:"colored"})
+      setShowLoginForm(false)
+      
     } catch (err) {
       Array.from(document.querySelectorAll("input")).forEach(
         input => (input.value = "")
@@ -87,43 +94,21 @@ const AppNavBar = () => {
   }
 
 
-  const handleLogoutSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      await axios.post('/users/logout', {userName: auth.userName}, {withCredentials: true})
-      setAuth({});
-    } catch (err) {
-      toast.error(`Error! ${err.response.data}`, {theme: "colored"})
-    }
-  }
-
-
-
-
     return (
       <>
       <Navbar bg="dark" variant="dark" expand={false}>
         <Container fluid>
           <Navbar.Brand href="#">React Node Express Tempalate</Navbar.Brand>
-          <Navbar.Toggle aria-controls="offcanvasNavbar" />
-          <Navbar.Offcanvas
-            id="offcanvasNavbar"
-            aria-labelledby="offcanvasNavbarLabel"
-            placement="end"
-          >
-            <Offcanvas.Body>
-              <Nav className="justify-content-end flex-grow-1 pe-3">
-                <Nav.Link onClick={handleShowRegistrationForm}>Register</Nav.Link>
-                <Nav.Link onClick={handleShowLoginForm}>Login</Nav.Link>
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                <Link to="/">Landing</Link>
-                <Link to="/users">Profile</Link>
-                <Link to="/admin">Admin</Link>
-              </Nav>
-              
-            </Offcanvas.Body>
-          </Navbar.Offcanvas>
+          <NavDropdown align="end" title={<FontAwesomeIcon icon={faGear} />} id="basic-nav-dropdown" flip="true">
+            <NavDropdown.Item onClick={handleShowRegistrationForm}>Registration</NavDropdown.Item>
+            <NavDropdown.Item onClick={handleShowLoginForm}>Login</NavDropdown.Item>
+            <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+            <NavDropdown.Item onClick={()=>{navigate('/admin')}}>Admin</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+          </NavDropdown>
         </Container>
+        <ToastContainer />  
       </Navbar>
 
       <Modal show={showRegistrationForm} onHide={handleCloseRegistrationForm}>
@@ -179,7 +164,7 @@ const AppNavBar = () => {
           </Button>
         </Modal.Body>
         <Modal.Footer>
-          <ToastContainer />  
+          
         </Modal.Footer>
       </Modal>
 
