@@ -12,7 +12,7 @@ const handleRefreshToken = (req, res) => {
     let valuesUpdateRefreshToken =  [refreshToken]
     db.query(SQLStringUpdateRefreshToken, valuesUpdateRefreshToken)
     .then(data => {
-        if(data.rows.length !== 1){
+        if (data.rows.length !== 1) {
             console.log('DB Error!')
             return res.sendStatus(500)
         }

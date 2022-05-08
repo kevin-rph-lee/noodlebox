@@ -5,19 +5,18 @@ const jwt = require('jsonwebtoken');
 
 
 //Checks for valid email
-function validateEmail (email) {
+const validateEmail = (email) => {
   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }
 
+//Update the refresh token in the DB when a user logs in
 updateRefreshToken = (refreshToken, userID) =>{
   let SQLStringUpdateRefreshToken = `UPDATE users SET refresh_token = $1 where id = $2;`
   let valuesUpdateRefreshToken =  [refreshToken, userID]
   db.query(SQLStringUpdateRefreshToken, valuesUpdateRefreshToken)
   .then(data => {
-   
   })
-
 }
 
 
@@ -131,9 +130,86 @@ const logoutUser = async (req, res) => {
   }
 }
 
+const registerUser = async (req, res) => {
+  //Checking if either password or username is empty
+  if(req.body.username.length === 0 || req.body.password.length === 0){
+    console.log('Must enter both email and password to login')
+    res.status(500).send('Must enter both email and password to login')
+    return;
+  } else if(req.body.password.length < 5) {
+    console.log('Password too short')
+    res.status(500).send('Password length insufficient')
+    return;
+  } else if(!validateEmail(req.body.username)){
+    console.log('Username not email')
+    res.status(500).send('Username must be an email format')
+    return;
+  } else {
+    const username = req.body.username.trim().toLowerCase().toString();
+    const password = req.body.password
+
+    let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
+    let valuesCheckUser =  [username]
+    //Checks if the user exists, if it does, checks if password is correct. If correct, sets a cookie session in the browser and logs the user in. 
+    db.query(SQLStringCheckUser, valuesCheckUser)
+      .then(async (data) => {
+  
+        if(data['rowCount'] === 1){
+          console.log('User already exists!')
+          res.status(500).send('Username already registered!')
+        } else if((data['rowCount'] > 1)) {
+          console.log('DB eror')
+          res.status(500).send('Internal Database Error! Please contact your system administrator')
+        } else {
+          
+          try {
+            let SQLStringRegisterUser = `INSERT INTO users (user_name, password, role, refresh_token) VALUES ($1, $2, user, NULL) RETURNING id, user_name, role;`
+            let valuesRegisterUser=  [username, password]
+            const userResults = await db.query(SQLStringRegisterUser, valuesRegisterUser)
+            const userID = userResults['rows'][0]['id']
+            const userName = userResults['rows'][0]['user_name']
+            const role = userResults['rows'][0]['role']
+            const accessToken = jwt.sign(
+              {
+                "userID": userID,
+                "userName": userName,
+                "role": 'user'
+              },
+              process.env.ACCESS_TOKEN_SECRET,
+              { expiresIn: '900s' }
+            );
+  
+            const refreshToken = jwt.sign(
+              { "userName": userName },
+              process.env.REFRESH_TOKEN_SECRET,
+              { expiresIn: '1d' }
+            );
+
+            updateRefreshToken(refreshToken, userID)
+
+            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
+
+            res.json({role, accessToken });
+
+          } catch (error) {
+            console.log(`Database Error! ${error}`)
+            res.status(500).send('Internal Database Error! Please contact your system administrator')
+          }
+
+
+        }
+      })
+  }
+
+
+
+
+
+}
 
 module.exports = {
     getUsers,
     loginUser,
-    logoutUser
+    logoutUser,
+    registerUser
 }

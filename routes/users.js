@@ -12,6 +12,10 @@ module.exports = () => {
     usersController.loginUser(req,res)
   });
 
+  router.post("/register", (req, res) => {
+    usersController.registerUser(req,res)
+  });
+
   router.post("/logout", (req, res) => {
     usersController.logoutUser(req,res)
   });

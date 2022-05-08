@@ -13,13 +13,12 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Landing/>} />
-      <Route path="unauthorized" element={<Unauthorized />} />
 
+      <Route element = {<PersistLogin />}>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Landing/>} />
+        <Route path="unauthorized" element={<Unauthorized />} />
 
-
-        <Route element = {<PersistLogin />}>
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
             <Route path="/users">
               <Route index element={<Profile />} />
@@ -31,10 +30,10 @@ function App() {
               <Route index element={<Admin />} />
             </Route>
           </Route>
-        </Route>
+          <Route path="*" element={<NotFound />} />
+      </Route>
 
-
-        <Route path="*" element={<NotFound />} />
+        
       </Route>
     </Routes>
   );
