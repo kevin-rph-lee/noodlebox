@@ -19,7 +19,6 @@ updateRefreshToken = (refreshToken, userID) =>{
   })
 }
 
-
 const getUsers = async (req, res) => {
 
     let userID = req.body.userID
@@ -146,7 +145,7 @@ const registerUser = async (req, res) => {
     return;
   } else {
     const username = req.body.username.trim().toLowerCase().toString();
-    const password = req.body.password
+    const password = bcrypt.hashSync(req.body.password, 10)
 
     let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
     let valuesCheckUser =  [username]
@@ -163,7 +162,7 @@ const registerUser = async (req, res) => {
         } else {
           
           try {
-            let SQLStringRegisterUser = `INSERT INTO users (user_name, password, role, refresh_token) VALUES ($1, $2, user, NULL) RETURNING id, user_name, role;`
+            let SQLStringRegisterUser = `INSERT INTO users (user_name, password, role, refresh_token) VALUES ($1, $2, 'user', NULL) RETURNING id, user_name, role;`
             let valuesRegisterUser=  [username, password]
             const userResults = await db.query(SQLStringRegisterUser, valuesRegisterUser)
             const userID = userResults['rows'][0]['id']
@@ -195,21 +194,55 @@ const registerUser = async (req, res) => {
             console.log(`Database Error! ${error}`)
             res.status(500).send('Internal Database Error! Please contact your system administrator')
           }
-
-
         }
       })
   }
 
+}
+
+
+const updatePasswordAdmin = async (req, res) => {
+  if(req.body.newUserPassword !== req.body.newUserPasswordConfirm){
+    res.status(500).send('Passwords do not match!')
+  } else if(req.body.newUserPassword.length < 5){
+    res.status(500).send('Password length too low!')
+  } else{
+    let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
+    let valuesCheckUser =  [req.user]
+
+    db.query(SQLStringCheckUser, valuesCheckUser)
+      .then(async (data) => {
+        console.log(req.body.updatePasswordAdmin)
+        console.log(data['rows'][0]['password'])
+        if(data['rowCount'] !== 1){
+          console.log('DB Error!')
+          res.status(500).send('Database error, please contact your system administrator!')
+        } else if(bcrypt.compareSync(req.body.adminPassword, data['rows'][0]['password'])){
+          try{
+            let SQLStringUpdateUserPass = `UPDATE users SET password = $1 where user_name = $2;`
+            let valuesUpdateUserPass = [ bcrypt.hashSync(req.body.newUserPassword, 10),req.body.userToUpdate]
+            await db.query(SQLStringUpdateUserPass, valuesUpdateUserPass)
+            res.sendStatus(200)
+          } catch {
+            res.status(500).send('DB error! Please contact your system administrator')
+          }
+        } else {
+          res.status(500).send('Invalid Admin password! Remember to enter your own password')
+        }
+    })
+  }
 
 
 
 
 }
 
+
+
 module.exports = {
     getUsers,
     loginUser,
     logoutUser,
-    registerUser
+    registerUser,
+    updatePasswordAdmin
 }

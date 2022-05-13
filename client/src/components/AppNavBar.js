@@ -1,41 +1,39 @@
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import "bootstrap/dist/css/bootstrap.min.css";
+import Navbar from 'react-bootstrap/Navbar'
+import "bootstrap/dist/css/bootstrap.min.css"
 import Container from 'react-bootstrap/Container'
 import Modal from 'react-bootstrap/Modal'
-import { useState, useEffect } from 'react';
+import { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
-import useAuth from '../hooks/useAuth';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import {Link, useNavigate} from 'react-router-dom'
+import useAuth from '../hooks/useAuth'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 
 const AppNavBar = () => {
-
-
-  //Store auth state and store it in the global context
+  
   const { setAuth, auth } = useAuth()
 
   const [registerUsername, setRegisterUsername] = useState([])
   const [registerPassword, setRegisterPassword] = useState([])
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState([])
-  const [showRegistrationForm, setShowRegistrationForm] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
 
-  const handleShowRegistrationForm = () => setShowRegistrationForm(true);
+  const handleShowRegistrationModal = () => setShowRegistrationModal(true);
 
   const [loginUsername, setLoginUsername] = useState([])
   const [loginPassword, setLoginPassword] = useState([])
-  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const handleShowLoginForm = () => setShowLoginForm(true);
+  const handleShowLoginModal = () => setShowLoginModal(true);
 
   const navigate = useNavigate()
 
+  //Clear all forms in the modal
   const clearForms = () => {
     Array.from(document.querySelectorAll("input")).forEach(
       input => (input.value = "")
@@ -47,12 +45,13 @@ const AppNavBar = () => {
     setLoginPassword([])
   }
 
-  const handleCloseLoginForm = () => {
-    setShowLoginForm(false);
+
+  const handleCloseLoginModal = () => {
+    setShowLoginModal(false);
     clearForms();
   }
-  const handleCloseRegistrationForm = () => {
-    setShowRegistrationForm(false);
+  const handleCloseRegistrationModal = () => {
+    setShowRegistrationModal(false);
     clearForms();
   }
 
@@ -60,23 +59,21 @@ const AppNavBar = () => {
     e.preventDefault()
 
     try {
-      console.log(registerPassword)
-      console.log(registerConfirmPassword)
       if (registerPassword !== registerConfirmPassword){
         clearForms()
-        toast.error('Passwords do not match', {theme: "colored"})
+        toast.error('Passwords do not match', {theme: 'colored'})
         return
       }
 
       const response = await axios.post('/users/register', {username: registerUsername, password: registerPassword}, {withCredentials: true})
       const responseData= response.data
       setAuth(responseData)
-      toast.success('Registered successfully', {theme:"colored"})
-      setShowRegistrationForm(false)
+      toast.success('Registered successfully', {theme:'colored'})
+      handleCloseRegistrationModal()
       
     } catch (err) {
       clearForms()
-      toast.error(`Error! ${err.response.data}`, {theme: "colored"})
+      toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
     }
   }
 
@@ -88,7 +85,7 @@ const AppNavBar = () => {
       const responseData= response.data
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:"colored"})
-      setShowLoginForm(false) 
+      handleCloseLoginModal() 
     } catch (err) {
       clearForms()
       toast.error(`Error! ${err.response.data}`, {theme: "colored"})
@@ -117,23 +114,23 @@ const AppNavBar = () => {
   let navBarItems= []
   if(auth.role === undefined){
     navBarItems = [
-      <NavDropdown.Item onClick={handleShowLoginForm}>Login</NavDropdown.Item>,
-      <NavDropdown.Item onClick={handleShowRegistrationForm}>Registration</NavDropdown.Item>,
+      <NavDropdown.Item key={'login'} onClick={handleShowLoginModal}>Login</NavDropdown.Item>,
+      <NavDropdown.Item key={'registration'} onClick={handleShowRegistrationModal}>Registration</NavDropdown.Item>,
     ]
   }else if(auth.role === 'admin'){
     navBarItems = [
-      <NavDropdown.Item onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
-      <NavDropdown.Item onClick={()=>{navigate('/admin')}}>Admin</NavDropdown.Item>,
-      <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+      <NavDropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
+      <NavDropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</NavDropdown.Item>,
+      <NavDropdown.Item key={'logout'} onClick={handleLogout}>Logout</NavDropdown.Item>
     ]
   } else if(auth.role === 'user'){
     navBarItems = [
-      <NavDropdown.Item onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
-      <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+      <NavDropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
+      <NavDropdown.Item key={'logout'} onClick={handleLogout}>Logout</NavDropdown.Item>
     ]
   } else {
     navBarItems = [
-      <NavDropdown.Item>ERROR!</NavDropdown.Item>
+      <NavDropdown.Item key={'error'}>ERROR!</NavDropdown.Item>
     ]
   }
 
@@ -149,7 +146,7 @@ const AppNavBar = () => {
       <ToastContainer position="top-left" />  
     </Navbar>
 
-    <Modal show={showRegistrationForm} onHide={handleCloseRegistrationForm}>
+    <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>
       <Modal.Header closeButton>
         <Modal.Title>Register User</Modal.Title>
       </Modal.Header>
@@ -171,16 +168,18 @@ const AppNavBar = () => {
             <Form.Control type="password" placeholder="Confirm password" onChange = {(e) => setRegisterConfirmPassword(e.target.value)}/>
           </Form.Group>
         </Form>
-        <Button variant="secondary" onClick={handleCloseRegistrationForm}>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleCloseRegistrationModal}>
           Close
         </Button>
         <Button variant="primary" onClick={handleRegistrationSubmit}>
           Register!
         </Button>
-      </Modal.Body>
+      </Modal.Footer>
     </Modal>
 
-    <Modal show={showLoginForm} onHide={handleCloseLoginForm}>
+    <Modal show={showLoginModal} onHide={handleCloseLoginModal}>
       <Modal.Header closeButton>
         <Modal.Title>Login</Modal.Title>
       </Modal.Header>
@@ -198,23 +197,18 @@ const AppNavBar = () => {
             <Form.Control type="password" placeholder="Password" onChange = {(e) => setLoginPassword(e.target.value)}/>
           </Form.Group>
         </Form>
-        <Button variant="secondary" onClick={handleCloseLoginForm}>
+      </Modal.Body>
+      <Modal.Footer>
+      <Button variant="secondary" onClick={handleCloseLoginModal}>
           Close
         </Button>
         <Button variant="primary" onClick={handleLoginSubmit}>
           Login!
         </Button>
-      </Modal.Body>
-      <Modal.Footer>
-        
       </Modal.Footer>
     </Modal>
-
     </>
   )
-
-
-
 }
 
 export default AppNavBar

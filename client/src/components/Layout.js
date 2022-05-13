@@ -4,10 +4,10 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = (setUserState) => {
     return (
-        <div className="App">
+       <>
             <AppNavBar setUserState = {setUserState}/>
             <Outlet />
-        </div>
+        </>
     )
 }
 

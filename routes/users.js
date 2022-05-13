@@ -2,11 +2,16 @@ const express = require('express');
 const router  = express.Router();
 const usersController = require('../controllers/usersController')
 const verifyJWT = require('../middleware/verifyJWT')
+const verifyRoles = require('../middleware/verifyRoles');
 
 module.exports = () => {
 
   router.route('/')
-    .get(verifyJWT, usersController.getUsers)
+    .get(verifyJWT, verifyRoles('admin'), usersController.getUsers)
+
+  router.route('/update/admin')
+    .post(verifyJWT, verifyRoles('admin'), usersController.updatePasswordAdmin)
+
 
   router.post("/login", (req, res) => {
     usersController.loginUser(req,res)
@@ -20,5 +25,8 @@ module.exports = () => {
     usersController.logoutUser(req,res)
   });
  
+
+ 
+
   return router;
 };
