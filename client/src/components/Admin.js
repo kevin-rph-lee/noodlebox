@@ -76,7 +76,7 @@ const Admin = () => {
             toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
             clearForms();
         }
-      }
+    }
     
     return (
         <>

@@ -12,7 +12,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGear } from '@fortawesome/free-solid-svg-icons'
-import NavDropdown from 'react-bootstrap/NavDropdown'
+import Nav from 'react-bootstrap/Nav'
+import Dropdown from 'react-bootstrap/Dropdown'
+import DropdownButton from 'react-bootstrap/DropdownButton'
 
 const AppNavBar = () => {
   
@@ -83,6 +85,8 @@ const AppNavBar = () => {
     try {
       const response = await axios.post('/users/login', {username: loginUsername, password: loginPassword}, {withCredentials: true})
       const responseData= response.data
+      console.log('Response data ' + responseData.role)
+      console.log('Response data ' + responseData.userName)
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:"colored"})
       handleCloseLoginModal() 
@@ -104,7 +108,7 @@ const AppNavBar = () => {
       )
       await navigate('/')
       setAuth({})
-      
+      toast.success('Logout successful!', {theme:'colored'})
 
     } catch (err) {
       console.log('Error! ' + err)
@@ -114,36 +118,41 @@ const AppNavBar = () => {
   let navBarItems= []
   if(auth.role === undefined){
     navBarItems = [
-      <NavDropdown.Item key={'login'} onClick={handleShowLoginModal}>Login</NavDropdown.Item>,
-      <NavDropdown.Item key={'registration'} onClick={handleShowRegistrationModal}>Registration</NavDropdown.Item>,
+      <Dropdown.Item key={'login'} onClick={handleShowLoginModal}>Login</Dropdown.Item>,
+      <Dropdown.Item key={'registration'} onClick={handleShowRegistrationModal}>Registration</Dropdown.Item>,
     ]
   }else if(auth.role === 'admin'){
     navBarItems = [
-      <NavDropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
-      <NavDropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</NavDropdown.Item>,
-      <NavDropdown.Item key={'logout'} onClick={handleLogout}>Logout</NavDropdown.Item>
+      <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
+      <Dropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</Dropdown.Item>,
+      <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
   } else if(auth.role === 'user'){
     navBarItems = [
-      <NavDropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</NavDropdown.Item>,
-      <NavDropdown.Item key={'logout'} onClick={handleLogout}>Logout</NavDropdown.Item>
+      <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
+      <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
   } else {
     navBarItems = [
-      <NavDropdown.Item key={'error'}>ERROR!</NavDropdown.Item>
+      <Dropdown.Item key={'error'}>ERROR!</Dropdown.Item>
     ]
   }
 
   return (
     <>
-    <Navbar bg="dark" variant="dark" expand={false}>
+    <Navbar variant='dark' bg="dark">
       <Container fluid>
-        <Navbar.Brand href="#">React Node Express Tempalate</Navbar.Brand>
-        <NavDropdown align="end" title={<FontAwesomeIcon icon={faGear} />} id="basic-nav-dropdown" flip="true">
-          {navBarItems}
-        </NavDropdown>
+        <Navbar.Brand>React Node Express Template</Navbar.Brand>
+        <Nav>
+          <Navbar.Text>
+            User: <a className='username-span'>{auth.userName ? auth.userName : 'Guest'}</a>
+          </Navbar.Text>
+          <DropdownButton align='end' title={<FontAwesomeIcon icon={faGear} />} id="dropdown-menu-align-end" variant= 'secondary' >
+            {navBarItems}
+          </DropdownButton>
+        </Nav>
       </Container>
-      <ToastContainer position="top-left" />  
+      <ToastContainer position="top-left" />
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>

@@ -22,22 +22,24 @@ const handleRefreshToken = (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             (err, decoded) => {
                 if (err || data.rows[0]['user_name'] !== decoded['userName']) {
-                    console.log('JWT Validation Error!')
+
                     return res.sendStatus(403);
                 }
-            
+                let userID = data['rows'][0]['id']
+                let userName = data['rows'][0]['user_name']
+                let role = data['rows'][0]['role']
+
                 const accessToken = jwt.sign(
                     {
-                        "userID": data['rows'][0]['id'],
-                        "userName": data['rows'][0]['user_name'],
-                        "role": data['rows'][0]['role']
+                        "userID": userID,
+                        "userName": userName,
+                        "role": role
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     { expiresIn: '900s' }
                 );
-                const role = data['rows'][0]['role']
-                console.log('creating new access token!')
-                res.json({ accessToken, role })
+
+                res.json({ accessToken, role, userName })
             }
         );
     })

@@ -95,7 +95,7 @@ const loginUser = async (req, res) => {
  
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
 
-        res.json({role, accessToken });
+        res.json({role, accessToken, userName });
       } else if(!bcrypt.compareSync(password, data['rows'][0]['password'])){
         console.log('Invalid username or password!')
         res.status(500).send('Invalid username or password!')
@@ -188,7 +188,7 @@ const registerUser = async (req, res) => {
 
             res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
 
-            res.json({role, accessToken });
+            res.json({role, accessToken, userName });
 
           } catch (error) {
             console.log(`Database Error! ${error}`)
