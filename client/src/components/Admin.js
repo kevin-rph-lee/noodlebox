@@ -37,7 +37,7 @@ const Admin = () => {
         //Get the users from the server
         const getUsers = async () => {
             try {
-                const response = await axiosPrivate.get('/users', {
+                const response = await axiosPrivate.get('/users/all', {
                     signal: controller.signal
                 });
                 isMounted && setUsers(response.data);
@@ -69,9 +69,9 @@ const Admin = () => {
         e.preventDefault()
         try {
             await axiosPrivate.post('/users/update/admin', {userToUpdate: editPasswordUserName, newUserPassword:newUserPassword, newUserPasswordConfirm:newUserPasswordConfirm, adminPassword:adminPassword });
+            toast.success('Password updated successfully', {theme:'colored'})
             handleResetPasswordModalClose();
             clearForms();
-            toast.success('Password updated successfully', {theme:'colored'})
         } catch (err) {
             toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
             clearForms();

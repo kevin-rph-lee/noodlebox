@@ -36,6 +36,24 @@ const getUsers = async (req, res) => {
     
 }
 
+
+const getUser = async (req, res) => {
+
+  let SQLStringGetUser = `SELECT id, user_name, role FROM users WHERE user_name = $1;`
+  let SQLStringValues = [req.user]
+
+  db.query(SQLStringGetUser, SQLStringValues)
+  .then(data => {
+    res.json(data.rows[0])
+  })
+  .catch(err => {
+    res
+      .status(500)
+      .json({ error: err.message });
+  });
+}
+
+
 const loginUser = async (req, res) => {
 
   //Checking if either password or username is empty
@@ -231,10 +249,37 @@ const updatePasswordAdmin = async (req, res) => {
         }
     })
   }
+}
 
 
+const updatePasswordUser = async (req, res) => {
+  if(req.body.newUserPassword !== req.body.newUserPasswordConfirm){
+    res.status(500).send('Passwords do not match!')
+  } else if(req.body.newUserPassword.length < 5){
+    res.status(500).send('Password length too low!')
+  } else{
+    let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
+    let valuesCheckUser =  [req.user]
 
-
+    db.query(SQLStringCheckUser, valuesCheckUser)
+      .then(async (data) => {
+        if(data['rowCount'] !== 1){
+          console.log('DB Error!')
+          res.status(500).send('Database error, please contact your system administrator!')
+        } else if(bcrypt.compareSync(req.body.userOldPassword, data['rows'][0]['password'])){
+          try{
+            let SQLStringUpdateUserPass = `UPDATE users SET password = $1 where user_name = $2;`
+            let valuesUpdateUserPass = [ bcrypt.hashSync(req.body.newUserPassword, 10), req.user]
+            await db.query(SQLStringUpdateUserPass, valuesUpdateUserPass)
+            res.sendStatus(200)
+          } catch {
+            res.status(500).send('DB error! Please contact your system administrator')
+          }
+        } else {
+          res.status(500).send('Invalid old password!')
+        }
+    })
+  }
 }
 
 
@@ -244,5 +289,8 @@ module.exports = {
     loginUser,
     logoutUser,
     registerUser,
-    updatePasswordAdmin
+    updatePasswordAdmin,
+    updatePasswordUser,
+    getUser,
+    updatePasswordUser
 }

@@ -2,7 +2,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import "bootstrap/dist/css/bootstrap.min.css"
 import Container from 'react-bootstrap/Container'
 import Modal from 'react-bootstrap/Modal'
-import { useState } from 'react'
+import {Link, useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
@@ -142,9 +142,9 @@ const AppNavBar = () => {
     <>
     <Navbar variant='dark' bg="dark">
       <Container fluid>
-        <Navbar.Brand>React Node Express Template</Navbar.Brand>
+        <Navbar.Brand onClick={()=>{navigate('/')}} className="app-title">React Node Express Template</Navbar.Brand>
         <Nav>
-          <Navbar.Text>
+          <Navbar.Text onClick={()=>{navigate('/users')}}>
             User: <a className='username-span'>{auth.userName ? auth.userName : 'Guest'}</a>
           </Navbar.Text>
           <DropdownButton align='end' title={<FontAwesomeIcon icon={faGear} />} id="dropdown-menu-align-end" variant= 'secondary' >

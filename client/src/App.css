@@ -4,4 +4,9 @@
 
 .username-span{
     padding-right:  10px;
+    cursor: pointer;
+}
+
+.app-title{
+    cursor: pointer;
 }
