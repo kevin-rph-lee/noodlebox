@@ -30,7 +30,7 @@ const Profile = () => {
 
     useEffect(() => {
         let isMounted = true;
-        const controller = new AbortController();
+        const controller = new AbortController()
         //Get the users from the server
         const getUserInfo = async () => {
             try {
@@ -84,10 +84,10 @@ const Profile = () => {
                         <Card.Text>
                         <b>Role: </b>{userInfo.role}
                         </Card.Text>
-                        <Button variant="primary" onClick={handleResetPasswordModalShow}>Reset Password</Button>
+                        <Button variant='primary' onClick={handleResetPasswordModalShow}>Reset Password</Button>
                     </Card.Body>
                 </Card>
-                <ToastContainer position="top-left" />  
+                <ToastContainer position='top-left' />  
             </div>
 
             <Modal show={showResetPasswordModal} onHide={handleResetPasswordModalClose}>
@@ -96,28 +96,28 @@ const Profile = () => {
                 </Modal.Header>
                 <Modal.Body>
                 <Form>
-                    <Form.Group className="mb-3" >
+                    <Form.Group className='mb-3' >
                         <Form.Label>Your Password</Form.Label>
-                        <Form.Control type="password" placeholder="Your password" onChange = {(e) => setUserOldPassword(e.target.value)}/>
-                    <Form.Text className="text-muted">
+                        <Form.Control type='password' placeholder='Your password' onChange = {(e) => setUserOldPassword(e.target.value)}/>
+                    <Form.Text className='text-muted'>
                         Enter your own password for security purpooses
                     </Form.Text>
                     </Form.Group>
-                    <Form.Group className="mb-3" >
+                    <Form.Group className='mb-3' >
                         <Form.Label>Enter new password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" onChange = {(e) => setNewUserPassword(e.target.value)}/>
+                        <Form.Control type='password' placeholder='Password' onChange = {(e) => setNewUserPassword(e.target.value)}/>
                     </Form.Group>
-                    <Form.Group className="mb-3" >
+                    <Form.Group className='mb-3' >
                         <Form.Label>Confirm new password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" onChange = {(e) => setNewUserPasswordConfirm(e.target.value)}/>
+                        <Form.Control type='password' placeholder='Password' onChange = {(e) => setNewUserPasswordConfirm(e.target.value)}/>
                     </Form.Group>
                 </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleResetPasswordModalClose}>
+                    <Button variant='secondary' onClick={handleResetPasswordModalClose}>
                     Close
                     </Button>
-                    <Button variant="primary" onClick={handleUpdatePasswordSubmit}>
+                    <Button variant='primary' onClick={handleUpdatePasswordSubmit}>
                     Save Changes
                     </Button>
                 </Modal.Footer>

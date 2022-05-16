@@ -1,8 +1,6 @@
-const db = require("../lib/dbConnect");
+const db = require('../lib/dbConnect');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-
 
 //Checks for valid email
 const validateEmail = (email) => {
@@ -19,9 +17,9 @@ updateRefreshToken = (refreshToken, userID) =>{
   })
 }
 
+//Get information for all users
 const getUsers = async (req, res) => {
 
-    let userID = req.body.userID
     let SQLStringGetUser = `SELECT id, user_name, role FROM users;`
 
     db.query(SQLStringGetUser)
@@ -33,10 +31,9 @@ const getUsers = async (req, res) => {
         .status(500)
         .json({ error: err.message });
     });
-    
 }
 
-
+//Get information for the user currently logged in 
 const getUser = async (req, res) => {
 
   let SQLStringGetUser = `SELECT id, user_name, role FROM users WHERE user_name = $1;`
@@ -53,12 +50,11 @@ const getUser = async (req, res) => {
   });
 }
 
-
+//Log in a user
 const loginUser = async (req, res) => {
 
   //Checking if either password or username is empty
   if(req.body.username.length === 0 || req.body.password.length === 0){
-    console.log('Must enter both email and password to login')
     res.status(500).send('Must enter both email and password to login')
     return;
   }
@@ -68,12 +64,11 @@ const loginUser = async (req, res) => {
 
   // Checking if the email is valid
   if (!validateEmail(username)){
-    console.log('Invalid email Format')
     res.status(500).send('Invalid email Format')
     return;
   }
 
-  //Query strings for DB
+
   let SQLStringCheckUser = `SELECT * FROM users WHERE user_name = $1;`
   let valuesCheckUser =  [username]
 
@@ -82,29 +77,27 @@ const loginUser = async (req, res) => {
     .then(async (data) => {
 
       if(data['rowCount'] == 0){
-        console.log('Invalid username or password!')
         res.status(500).send('Invalid username or password!')
       } else if((data['rowCount'] > 1)) {
         console.log('DB eror')
         res.status(500).send('Internal Database Error! Please contact your system administrator')
       } else if(bcrypt.compareSync(password, data['rows'][0]['password'])){
-        console.log('Login Successful')
         const userID = data['rows'][0]['id']
         const userName = data['rows'][0]['user_name']
         const role = data['rows'][0]['role']
 
         const accessToken = jwt.sign(
           {
-            "userID": userID,
-            "userName": userName,
-            "role": role
+            'userID': userID,
+            'userName': userName,
+            'role': role
           },
           process.env.ACCESS_TOKEN_SECRET,
           { expiresIn: '900s' }
         );
 
         const refreshToken = jwt.sign(
-          { "userName": data['rows'][0]['user_name'] },
+          { 'userName': data['rows'][0]['user_name'] },
           process.env.REFRESH_TOKEN_SECRET,
           { expiresIn: '1d' }
         );
@@ -115,15 +108,14 @@ const loginUser = async (req, res) => {
 
         res.json({role, accessToken, userName });
       } else if(!bcrypt.compareSync(password, data['rows'][0]['password'])){
-        console.log('Invalid username or password!')
         res.status(500).send('Invalid username or password!')
       } else {
-        console.log('Other error')
+        console.log('DB error!')
         res.status(500).send('Internal Error! Please contact your system administrator')
       }
     })
     .catch(err => {
-      console.log('Other error')
+      console.log('Other error. Please investigate')
       console.log(err.message)
       res
         .status(500)
@@ -131,6 +123,7 @@ const loginUser = async (req, res) => {
     });
 }
 
+//Logs a user out by clearing the cookie and setting the refresh token of the user to NULL
 const logoutUser = async (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204); //No content
@@ -142,23 +135,20 @@ const logoutUser = async (req, res) => {
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
     res.sendStatus(204);
   } catch (err) {
-    console.log('Error updating refresh token to NULL! ' + err)
     res.sendStatus(500)
   }
 }
 
+//Register new user
 const registerUser = async (req, res) => {
   //Checking if either password or username is empty
   if(req.body.username.length === 0 || req.body.password.length === 0){
-    console.log('Must enter both email and password to login')
     res.status(500).send('Must enter both email and password to login')
     return;
   } else if(req.body.password.length < 5) {
-    console.log('Password too short')
     res.status(500).send('Password length insufficient')
     return;
   } else if(!validateEmail(req.body.username)){
-    console.log('Username not email')
     res.status(500).send('Username must be an email format')
     return;
   } else {
@@ -172,7 +162,6 @@ const registerUser = async (req, res) => {
       .then(async (data) => {
   
         if(data['rowCount'] === 1){
-          console.log('User already exists!')
           res.status(500).send('Username already registered!')
         } else if((data['rowCount'] > 1)) {
           console.log('DB eror')
@@ -188,16 +177,16 @@ const registerUser = async (req, res) => {
             const role = userResults['rows'][0]['role']
             const accessToken = jwt.sign(
               {
-                "userID": userID,
-                "userName": userName,
-                "role": 'user'
+                'userID': userID,
+                'userName': userName,
+                'role': 'user'
               },
               process.env.ACCESS_TOKEN_SECRET,
               { expiresIn: '900s' }
             );
   
             const refreshToken = jwt.sign(
-              { "userName": userName },
+              { 'userName': userName },
               process.env.REFRESH_TOKEN_SECRET,
               { expiresIn: '1d' }
             );
@@ -218,7 +207,7 @@ const registerUser = async (req, res) => {
 
 }
 
-
+//Used when a admin updates the password of another user
 const updatePasswordAdmin = async (req, res) => {
   if(req.body.newUserPassword !== req.body.newUserPasswordConfirm){
     res.status(500).send('Passwords do not match!')
@@ -230,8 +219,6 @@ const updatePasswordAdmin = async (req, res) => {
 
     db.query(SQLStringCheckUser, valuesCheckUser)
       .then(async (data) => {
-        console.log(req.body.updatePasswordAdmin)
-        console.log(data['rows'][0]['password'])
         if(data['rowCount'] !== 1){
           console.log('DB Error!')
           res.status(500).send('Database error, please contact your system administrator!')
@@ -251,7 +238,7 @@ const updatePasswordAdmin = async (req, res) => {
   }
 }
 
-
+//Used when a user updates their own password
 const updatePasswordUser = async (req, res) => {
   if(req.body.newUserPassword !== req.body.newUserPasswordConfirm){
     res.status(500).send('Passwords do not match!')
@@ -281,8 +268,6 @@ const updatePasswordUser = async (req, res) => {
     })
   }
 }
-
-
 
 module.exports = {
     getUsers,

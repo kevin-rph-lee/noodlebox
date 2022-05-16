@@ -1,4 +1,4 @@
-const db = require("../lib/dbConnect");
+const db = require('../lib/dbConnect');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -31,9 +31,9 @@ const handleRefreshToken = (req, res) => {
 
                 const accessToken = jwt.sign(
                     {
-                        "userID": userID,
-                        "userName": userName,
-                        "role": role
+                        'userID': userID,
+                        'userName': userName,
+                        'role': role
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     { expiresIn: '900s' }

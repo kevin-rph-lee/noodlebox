@@ -1,10 +1,10 @@
 const NotFound = () => {
 
     return (
-        <>
-        <h1>404 Not found!</h1>
-        </>
+        <div className='main'>
+            <p>Hello World</p>
+        </div>
     );
   };
   
-  export default NotFound;
+  export default NotFound

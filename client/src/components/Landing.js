@@ -1,12 +1,10 @@
 const Landing = () => {
 
-
-
     return (
-        <>
-        <h1>Herro world!</h1>
-        </>
+        <div className='main'>
+            <p>Hello World</p>
+        </div>
     );
   };
   
-  export default Landing;
+  export default Landing

@@ -1,17 +1,16 @@
-// server/index.js
 require('dotenv').config();
 
-const express = require("express");
+const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 3001;
 const app = express();
-const morgan = require("morgan");
-const cors = require("cors");
+const morgan = require('morgan');
+const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
-// PG database client/connection setupKelly Brook
+// PG database client/connection setup
 
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
@@ -21,7 +20,7 @@ db.connect();
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
-app.use(morgan("dev"));
+app.use(morgan('dev'));
 
 app.use(credentials);
 
@@ -31,23 +30,22 @@ app.use(express.json()); // => allows us to access the req.body
 //middleware for cookies
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   //server static content
   //npm run build
-  app.use(express.static(path.join(__dirname, "client/build")));
+  app.use(express.static(path.join(__dirname, 'client/build')));
 }
 
 console.log(__dirname);
-console.log(path.join(__dirname, "client/build"));
+console.log(path.join(__dirname, 'client/build'));
 
 // Separated Routes for each Resource
 const usersRoutes = require('./routes/users');
 const refreshRoutes = require('./routes/refresh');
 
 // Resource routes
-app.use("/users", usersRoutes());
-app.use("/refresh", refreshRoutes());
-
+app.use('/users', usersRoutes());
+app.use('/refresh', refreshRoutes());
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {

@@ -1,8 +1,8 @@
 import Navbar from 'react-bootstrap/Navbar'
-import "bootstrap/dist/css/bootstrap.min.css"
+import 'bootstrap/dist/css/bootstrap.min.css'
 import Container from 'react-bootstrap/Container'
 import Modal from 'react-bootstrap/Modal'
-import {Link, useState } from 'react'
+import {useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
@@ -37,8 +37,8 @@ const AppNavBar = () => {
 
   //Clear all forms in the modal
   const clearForms = () => {
-    Array.from(document.querySelectorAll("input")).forEach(
-      input => (input.value = "")
+    Array.from(document.querySelectorAll('input')).forEach(
+      input => (input.value = '')
     );
     setRegisterUsername([])
     setRegisterPassword([])
@@ -47,16 +47,19 @@ const AppNavBar = () => {
     setLoginPassword([])
   }
 
-
+  //Closes the login modal and clears the forms
   const handleCloseLoginModal = () => {
     setShowLoginModal(false);
     clearForms();
   }
+
+  //Closes the register modal and clears the forms
   const handleCloseRegistrationModal = () => {
     setShowRegistrationModal(false);
     clearForms();
   }
 
+  //Handles new registration of a user
   const handleRegistrationSubmit = async (e) => {
     e.preventDefault()
 
@@ -79,24 +82,24 @@ const AppNavBar = () => {
     }
   }
 
+  //Logs the user into the system
   const handleLoginSubmit = async (e) => {
     e.preventDefault()
 
     try {
       const response = await axios.post('/users/login', {username: loginUsername, password: loginPassword}, {withCredentials: true})
       const responseData= response.data
-      console.log('Response data ' + responseData.role)
-      console.log('Response data ' + responseData.userName)
+      //Sets user info within the auth state
       setAuth(responseData)
-      toast.success('Logged in successfully', {theme:"colored"})
+      toast.success('Logged in successfully', {theme:'colored'})
       handleCloseLoginModal() 
     } catch (err) {
       clearForms()
-      toast.error(`Error! ${err.response.data}`, {theme: "colored"})
+      toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
     }
   }
 
-
+  //Logs a user out
   const handleLogout = async (e) => {
     e.preventDefault();
 
@@ -111,24 +114,29 @@ const AppNavBar = () => {
       toast.success('Logout successful!', {theme:'colored'})
 
     } catch (err) {
-      console.log('Error! ' + err)
+      toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
     }
   }
+  
 
+  //Builds the navbar based off the role of the user or if it's a guest
   let navBarItems= []
   if(auth.role === undefined){
     navBarItems = [
+      <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
       <Dropdown.Item key={'login'} onClick={handleShowLoginModal}>Login</Dropdown.Item>,
       <Dropdown.Item key={'registration'} onClick={handleShowRegistrationModal}>Registration</Dropdown.Item>,
     ]
   }else if(auth.role === 'admin'){
     navBarItems = [
+      <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
       <Dropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
   } else if(auth.role === 'user'){
     navBarItems = [
+      <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
@@ -140,19 +148,19 @@ const AppNavBar = () => {
 
   return (
     <>
-    <Navbar variant='dark' bg="dark">
+    <Navbar variant='dark' bg='dark'>
       <Container fluid>
-        <Navbar.Brand onClick={()=>{navigate('/')}} className="app-title">React Node Express Template</Navbar.Brand>
+        <Navbar.Brand onClick={()=>{navigate('/')}} className='app-title'>React Node Express Template</Navbar.Brand>
         <Nav>
           <Navbar.Text onClick={()=>{navigate('/users')}}>
             User: <a className='username-span'>{auth.userName ? auth.userName : 'Guest'}</a>
           </Navbar.Text>
-          <DropdownButton align='end' title={<FontAwesomeIcon icon={faGear} />} id="dropdown-menu-align-end" variant= 'secondary' >
+          <DropdownButton align='end' title={<FontAwesomeIcon icon={faGear} />} id='dropdown-menu-align-end' variant= 'secondary' >
             {navBarItems}
           </DropdownButton>
         </Nav>
       </Container>
-      <ToastContainer position="top-left" />
+      <ToastContainer position='top-left' />
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>
@@ -161,28 +169,28 @@ const AppNavBar = () => {
       </Modal.Header>
       <Modal.Body>
       <Form>
-          <Form.Group className="mb-3" >
+          <Form.Group className='mb-3' >
             <Form.Label>Username (Email address)</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" onChange = {(e) => setRegisterUsername(e.target.value)} />
-            <Form.Text className="text-muted">
+            <Form.Control type='email' placeholder='Enter email' onChange = {(e) => setRegisterUsername(e.target.value)} />
+            <Form.Text className='text-muted'>
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
-          <Form.Group className="mb-3" >
+          <Form.Group className='mb-3' >
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" onChange = {(e) => setRegisterPassword(e.target.value)}/>
+            <Form.Control type='password' placeholder='Password' onChange = {(e) => setRegisterPassword(e.target.value)}/>
           </Form.Group>
-          <Form.Group className="mb-3" >
+          <Form.Group className='mb-3' >
             <Form.Label>Confirm Password</Form.Label>
-            <Form.Control type="password" placeholder="Confirm password" onChange = {(e) => setRegisterConfirmPassword(e.target.value)}/>
+            <Form.Control type='password' placeholder='Confirm password' onChange = {(e) => setRegisterConfirmPassword(e.target.value)}/>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleCloseRegistrationModal}>
+        <Button variant='secondary' onClick={handleCloseRegistrationModal}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleRegistrationSubmit}>
+        <Button variant='primary' onClick={handleRegistrationSubmit}>
           Register!
         </Button>
       </Modal.Footer>
@@ -194,24 +202,24 @@ const AppNavBar = () => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" >
+          <Form.Group className='mb-3' >
             <Form.Label>Username (Email address)</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" onChange = {(e) => setLoginUsername(e.target.value)} />
-            <Form.Text className="text-muted">
+            <Form.Control type='email' placeholder='Enter email' onChange = {(e) => setLoginUsername(e.target.value)} />
+            <Form.Text className='text-muted'>
               We'll never share your email with anyone else.
             </Form.Text>
           </Form.Group>
-          <Form.Group className="mb-3" >
+          <Form.Group className='mb-3' >
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" onChange = {(e) => setLoginPassword(e.target.value)}/>
+            <Form.Control type='password' placeholder='Password' onChange = {(e) => setLoginPassword(e.target.value)}/>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-      <Button variant="secondary" onClick={handleCloseLoginModal}>
+      <Button variant='secondary' onClick={handleCloseLoginModal}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleLoginSubmit}>
+        <Button variant='primary' onClick={handleLoginSubmit}>
           Login!
         </Button>
       </Modal.Footer>

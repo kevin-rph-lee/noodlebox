@@ -22,23 +22,20 @@ module.exports = () => {
   router.route('/update/user')
     .post(verifyJWT, verifyRoles('admin', 'user'), usersController.updatePasswordUser)
 
-  //User Logs in
-  router.post("/login", (req, res) => {
+  //Logging in a user
+  router.post('/login', (req, res) => {
     usersController.loginUser(req,res)
   });
 
   //New user registration
-  router.post("/register", (req, res) => {
+  router.post('/register', (req, res) => {
     usersController.registerUser(req,res)
   });
 
   //Logout user
-  router.post("/logout", (req, res) => {
+  router.post('/logout', (req, res) => {
     usersController.logoutUser(req,res)
   });
- 
-
- 
 
   return router;
 };
