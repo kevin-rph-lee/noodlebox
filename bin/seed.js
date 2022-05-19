@@ -18,6 +18,18 @@ let valuesInsertUsersSeed =  ['admin@admin.com', bcrypt.hashSync(process.env.ADM
                           'user2@user.com', bcrypt.hashSync(process.env.USER2_PASS, 10), 'user', null,
                           'user3@user.com', bcrypt.hashSync(process.env.USER3_PASS, 10), 'user', null]
 
+let SQLStringInsertMenuItemsSeed = `INSERT INTO menu_items(item_name, item_type, item_price, item_picture, item_description) 
+                          VALUES('Chow-mein', 'noodle', 12, 'test', 'Crispy chow mein with seafood and vegetables'), 
+                          ('Pho', 'noodle', 15, 'test', 'Beef pho'), 
+                          ('Ramen', 'noodle', 17, 'test', 'Tonkatsu Ramen'),
+                          ('Wonton Noodle', 'noodle', 14, 'test', 'With shrimp and pork wontons'),
+                          ('Gyoza', 'snack', 6, 'test', 'Pork and vegetable pan fried gyoza'), 
+                          ('Spring roll', 'snack', 5, 'test', 'Vegetable spring rolls'),
+                          ('Satay', 'snack', 6.5, 'test', 'Beef satay skewers'), 
+                          ('Bubble Tea', 'drink', 4.5, 'test', 'Ask server for available flavours'), 
+                          ('Viet Coffee', 'drink', 4, 'test', 'Extra strong');`
+
+
 function seedUsers(){
   return new Promise((resolve) =>{
     db.query(SQLStringInsertUsersSeed, valuesInsertUsersSeed)
@@ -31,8 +43,22 @@ function seedUsers(){
   })
 }
 
+function seedMenuItems(){
+  return new Promise((resolve) =>{
+    db.query(SQLStringInsertMenuItemsSeed)
+    .then( () => {
+      console.log('Menu Item seed successful')
+      resolve()
+    }).catch(err => {
+      console.log('ERROR: ')
+      console.log(err)
+    });
+  })
+}
+
 async function seedData() {
   await seedUsers();
+  await seedMenuItems();
   db.end();
   console.log('Seeds successful')
   return;

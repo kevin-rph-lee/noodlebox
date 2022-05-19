@@ -150,7 +150,7 @@ const AppNavBar = () => {
     <>
     <Navbar variant='dark' bg='dark'>
       <Container fluid>
-        <Navbar.Brand onClick={()=>{navigate('/')}} className='app-title'>React Node Express Template</Navbar.Brand>
+        <Navbar.Brand onClick={()=>{navigate('/')}} className='app-title'>🍜 The Noodle Box</Navbar.Brand>
         <Nav>
           <Navbar.Text onClick={()=>{navigate('/users')}}>
             User: <a className='username-span'>{auth.userName ? auth.userName : 'Guest'}</a>

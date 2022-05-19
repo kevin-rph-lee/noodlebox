@@ -10,3 +10,17 @@
 .app-title{
     cursor: pointer;
 }
+
+.menu-item{
+    margin: 20px;
+}
+
+.card-img-top {
+    width: 100px;
+    height: 180px;
+    object-fit: cover;
+}
+
+.page-title{
+    text-align: center;
+}

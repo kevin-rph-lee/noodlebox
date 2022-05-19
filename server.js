@@ -42,10 +42,13 @@ console.log(path.join(__dirname, 'client/build'));
 // Separated Routes for each Resource
 const usersRoutes = require('./routes/users');
 const refreshRoutes = require('./routes/refresh');
+const menuItemsRoutes = require('./routes/menuItems');
+
 
 // Resource routes
 app.use('/users', usersRoutes());
 app.use('/refresh', refreshRoutes());
+app.use('/menuItems', menuItemsRoutes());
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
