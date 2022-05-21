@@ -152,9 +152,13 @@ const AppNavBar = () => {
       <Container fluid>
         <Navbar.Brand onClick={()=>{navigate('/')}} className='app-title'>🍜 The Noodle Box</Navbar.Brand>
         <Nav>
-          <Navbar.Text onClick={()=>{navigate('/users')}}>
-            User: <a className='username-span'>{auth.userName ? auth.userName : 'Guest'}</a>
-          </Navbar.Text>
+          {auth.userName ? 
+                    <Navbar.Text onClick={()=>{navigate('/users')}}>
+                      User: <a className='username-span'>auth.userName</a>
+                    </Navbar.Text> :
+                    <Navbar.Text>
+                     User: <a className='username-span'>Guest</a>
+                    </Navbar.Text> }
           <DropdownButton align='end' title={<FontAwesomeIcon icon={faGear} />} id='dropdown-menu-align-end' variant= 'secondary' >
             {navBarItems}
           </DropdownButton>
