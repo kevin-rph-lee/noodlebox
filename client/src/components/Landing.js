@@ -8,11 +8,18 @@ import Form from 'react-bootstrap/Form'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer, toast } from 'react-toastify'
+import Modal from 'react-bootstrap/Modal'
+import useAuth from '../hooks/useAuth'
 
 const Landing = () => {
+    const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
+
     const [menuItems, setMenuItems] = useState([])
     const [itemCart, setItemCart] = useState({})
     const axiosPrivate = useAxiosPrivate()    
+    const handleSubmitOrderModalShow = () => setSubmitOrderModal(false);
+    const handleSubmitOrderModalClose = () => setSubmitOrderModal(true);
+    const { setAuth, auth } = useAuth()
 
     useEffect(() => {
         let isMounted = true;
@@ -80,47 +87,70 @@ const Landing = () => {
     }
 
     const submitOrder = () => {
-        toast.error(`Must be logged in`, {theme: 'colored'})
+        if(auth.role !== 'user' ){
+            toast.error(`Must be logged in`, {theme: 'colored'})
+        } else {
+            handleSubmitOrderModalShow()
+        }
+        
     }
 
     return (
-        <div className='main'>
-            <div className='page-title'>
-                <h1>Menu</h1>
-                <Button variant='success' onClick={submitOrder}>Order!</Button>
+        <>
+            <div className='main'>
+                <div className='page-title'>
+                    <h1>Menu</h1>
+                    <Button variant='success' onClick={submitOrder}>Order!</Button>
+                </div>
+                <h2>Noodles</h2>
+                <Container fluid>
+                    <Row>
+                        {menuItems.map( menuItem =>{
+                            return menuItem.item_type === 'noodle' ?
+                                createCard(menuItem) : null 
+                            } 
+                        )}
+                    </Row>
+                </Container>
+                <h2>Snacks</h2>
+                <Container fluid>
+                    <Row>
+                        {menuItems.map( menuItem =>{
+                            return menuItem.item_type === 'snack' ?
+                                createCard(menuItem) : null
+                            } 
+                        )}
+                    </Row>
+                </Container>
+                <h2>Drinks</h2>
+                <Container fluid>
+                    <Row>
+                        {menuItems.map( menuItem =>{
+                            return menuItem.item_type === 'drink' ?
+                                createCard(menuItem) : null
+                            } 
+                        )}
+                    </Row>
+                </Container>
+                <ToastContainer position='top-left' />
             </div>
-            <h2>Noodles</h2>
-            <Container fluid>
-                <Row>
-                    {menuItems.map( menuItem =>{
-                        return menuItem.item_type === 'noodle' ?
-                            createCard(menuItem) : null 
-                        } 
-                    )}
-                </Row>
-            </Container>
-            <h2>Snacks</h2>
-            <Container fluid>
-                <Row>
-                    {menuItems.map( menuItem =>{
-                        return menuItem.item_type === 'snack' ?
-                            createCard(menuItem) : null
-                        } 
-                    )}
-                </Row>
-            </Container>
-            <h2>Drinks</h2>
-            <Container fluid>
-                <Row>
-                    {menuItems.map( menuItem =>{
-                        return menuItem.item_type === 'drink' ?
-                            createCard(menuItem) : null
-                        } 
-                    )}
-                </Row>
-            </Container>
-            <ToastContainer position='top-left' />
-        </div>
+
+
+            <Modal show={showSubmitOrderModal} onHide={handleSubmitOrderModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleSubmitOrderModalClose}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={handleSubmitOrderModalClose}>
+                    Save Changes
+                </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
   };
   

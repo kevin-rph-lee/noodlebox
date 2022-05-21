@@ -93,6 +93,8 @@ const AppNavBar = () => {
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:'colored'})
       handleCloseLoginModal() 
+      navigate('/')
+
     } catch (err) {
       clearForms()
       toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
@@ -154,7 +156,7 @@ const AppNavBar = () => {
         <Nav>
           {auth.userName ? 
                     <Navbar.Text onClick={()=>{navigate('/users')}}>
-                      User: <a className='username-span'>auth.userName</a>
+                      User: <a className='username-span'>{auth.userName}</a>
                     </Navbar.Text> :
                     <Navbar.Text>
                      User: <a className='username-span'>Guest</a>
