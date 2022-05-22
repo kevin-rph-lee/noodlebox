@@ -31,7 +31,6 @@ const Landing = () => {
                     signal: controller.signal
                 });
                 let newMenuItems = {}
-                console.log(response.data)
                 //Iterate through all of the menu items and create the cart, defaulting the quantity of each item to 0
                 for(let i =0; i < response.data.length; i++){
                     newMenuItems[response.data[i].id] = {
@@ -84,51 +83,59 @@ const Landing = () => {
     //Takes the ID of the menu item we want to increase the quantity of in the cart, and then increments it up by one. 
     const increaseQuantity = (id) =>{
         if(menuItems[id].itemQuantity < 9){
-
-
-
-            // setMenuItems(prevMenuItems => ({ ...prevMenuItems, [id]: prevMenuItems[id].itemQuantity + 1 }))
-
-            // this.setState(prevState => ({
-            //     food: {
-            //       ...prevState.food,           // copy all other key-value pairs of food object
-            //       pizza: {                     // specific object of food object
-            //         ...prevState.food.pizza,   // copy all pizza key-value pairs
-            //         extraCheese: true          // update value of specific key
-            //       }
-            //     }
-            //   }))
-
+            const newMenuItem = menuItems[id]
+            newMenuItem.itemQuantity ++
+            setMenuItems(prevInputs => Object.assign({}, prevInputs, {[id]: newMenuItem }));
         }
     }
 
     const decreaseQuantity = (id) =>{
-        if(itemCart[id] > 0){
-            setItemCart(prevCart => ({ ...prevCart, [id]: prevCart[id] - 1 }))
+        if(menuItems[id].itemQuantity > 0){
+            const newMenuItem = menuItems[id]
+            newMenuItem.itemQuantity --
+            setMenuItems(prevInputs => Object.assign({}, prevInputs, {[id]: newMenuItem }));
         }
+    }
+
+    const openCart = () => {
+        for (const menuItemID in menuItems) {
+            if(menuItems[menuItemID].itemQuantity > 0){
+                if(auth.role !== 'user' ){
+                    toast.error(`Must be logged in`, {theme: 'colored'})
+                    return
+                } else {
+                    handleSubmitOrderModalShow()
+                    return
+                }
+            }
+        }
+        toast.error(`No items in cart!`, {theme: 'colored'})
+    }
+
+    const calculateTotalPrice = () => {
+        let totalPrice = 0
+        for (const menuItemID in menuItems) {
+            totalPrice = totalPrice + (menuItems[menuItemID].itemQuantity * menuItems[menuItemID].itemPrice)
+        }
+        return totalPrice
     }
 
     const submitOrder = () => {
-
-        if(auth.role !== 'user' ){
-            toast.error(`Must be logged in`, {theme: 'colored'})
-        } else {
-            handleSubmitOrderModalShow()
-        }
-        
+        toast.success(`Order Submitted! (not really)`, {theme: 'colored'})
     }
 
-    const renderCart = (itemCart) => {
-
-        return  Object.keys(itemCart).map((itemCartID,i) => {
-
-            return(
-            <tr key={i}>
-                <td></td>
-                <td>{itemCart[itemCartID]}</td>
-                <td>test</td>
-            </tr>
-            )
+    const renderCart = (menuItems) => {
+        return  Object.keys(menuItems).map((menuID,i) => {
+            if(menuItems[menuID].itemQuantity > 0){
+                return(
+                    <tr key={menuID}>
+                        <td>{menuItems[menuID].itemName}</td>
+                        <td>{menuItems[menuID].itemQuantity}</td>
+                        <td>${menuItems[menuID].itemPrice}</td>
+                        <td>${menuItems[menuID].itemPrice * menuItems[menuID].itemQuantity}</td>
+                    </tr>
+                    )
+            }
         })
     }
 
@@ -137,7 +144,7 @@ const Landing = () => {
             <div className='main'>
                 <div className='page-title'>
                     <h1>Menu</h1>
-                    <Button variant='success' onClick={submitOrder}>Order!</Button>
+                    <Button variant='success' onClick={openCart}>Order!</Button>
                 </div>
                 <h2>Noodles</h2>
                 <Container fluid>
@@ -151,21 +158,19 @@ const Landing = () => {
                 <h2>Snacks</h2>
                 <Container fluid>
                     <Row>
-                        {/* {menuItems.map( menuItem =>{
-                            return menuItem.item_type === 'snack' ?
-                                createCard(menuItem) : null
-                            } 
-                        )} */}
+                    {Object.keys(menuItems).map(function(itemID, keyIndex) {
+                            return menuItems[itemID].itemType === 'snack' ?
+                                createCard(menuItems[itemID]) : null
+                    })}
                     </Row>
                 </Container>
                 <h2>Drinks</h2>
                 <Container fluid>
                     <Row>
-                        {/* {menuItems.map( menuItem =>{
-                            return menuItem.item_type === 'drink' ?
-                                createCard(menuItem) : null
-                            } 
-                        )} */}
+                    {Object.keys(menuItems).map(function(itemID, keyIndex) {
+                            return menuItems[itemID].itemType === 'drink' ?
+                                createCard(menuItems[itemID]) : null
+                    })}
                     </Row>
                 </Container>
                 <ToastContainer position='top-left' />
@@ -179,23 +184,25 @@ const Landing = () => {
                 <Modal.Body>
                 <Table striped bordered hover>
                     <thead>
-                        <tr>
+                        <tr key='Title'>
                             <th>Item</th>
                             <th>Quantity</th>
-                            <th>Price</th>
+                            <th>Item Price</th>
+                            <th>Item Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {renderCart(itemCart)}
+                        {renderCart(menuItems)}
                     </tbody>
                 </Table>
-
+                <span>Total Price: ${calculateTotalPrice()}</span>
+                
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={handleSubmitOrderModalClose}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={handleSubmitOrderModalClose}>
+                <Button variant="primary" onClick={()=>{handleSubmitOrderModalClose(); submitOrder()}}>
                     Save Changes
                 </Button>
                 </Modal.Footer>
