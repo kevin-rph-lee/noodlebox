@@ -14,7 +14,7 @@ import Table from 'react-bootstrap/Table'
 const Landing = () => {
     const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
 
-    const [menuItems, setMenuItems] = useState([])
+    const [menuItems, setMenuItems] = useState({})
     const [itemCart, setItemCart] = useState({})
     const axiosPrivate = useAxiosPrivate()    
     const handleSubmitOrderModalShow = () => setSubmitOrderModal(true);
@@ -30,13 +30,21 @@ const Landing = () => {
                 const response = await axiosPrivate.get('/menuItems', {
                     signal: controller.signal
                 });
-                let newItemCart = itemCart
+                let newMenuItems = {}
+                console.log(response.data)
                 //Iterate through all of the menu items and create the cart, defaulting the quantity of each item to 0
                 for(let i =0; i < response.data.length; i++){
-                    newItemCart[response.data[i].id] = 0
+                    newMenuItems[response.data[i].id] = {
+                        itemID: response.data[i].id,
+                        itemName : response.data[i].item_name,
+                        itemDescription: response.data[i].item_description,
+                        itemType : response.data[i].item_type,
+                        itemPrice: response.data[i].item_price,
+                        itemQuantity: 0
+                    }
                 }
-                setItemCart(newItemCart)
-                isMounted && setMenuItems(response.data)
+
+                isMounted && setMenuItems(newMenuItems)
             } catch (err) {
                 console.log(err)
             }
@@ -49,24 +57,24 @@ const Landing = () => {
     }, [])
 
     const createCard = (menuItem) =>{
-        let itemImg = `/${menuItem.id}.jpg`
-        let id = menuItem.id
+        let itemImg = `/${menuItem.itemID}.jpg`
+        let id = menuItem.itemID
         // let numberInCart = 
 
         return (
             <Card style={{ width: '18rem' }} className='menu-item' key={menuItem.id} >
                 <Card.Img variant="top" src= {itemImg} />
                 <Card.Body>
-                    <Card.Title>{menuItem.item_name}</Card.Title>
+                    <Card.Title>{menuItem.itemName}</Card.Title>
                     <Card.Text>
-                        <b>Price: ${menuItem.item_price}</b> 
+                        <b>Price: ${menuItem.itemPrice}</b> 
                         <br/>
-                        {menuItem.item_description}
+                        {menuItem.itemDescription}
                     </Card.Text>
                     <div className='order-counter'>
-                        <Button className='plus-minus-button' name= {menuItem.id} onClick={() => increaseQuantity(id)}><FontAwesomeIcon icon={faArrowUp} name= {menuItem.id} /></Button>
-                        <span className='counter'>{itemCart[menuItem.id]}</span>
-                        <Button className='plus-minus-button' name= {menuItem.id} onClick={() => decreaseQuantity(id)}><FontAwesomeIcon icon={faArrowDown} name= {menuItem.id} /></Button>
+                        <Button className='plus-minus-button' name= {menuItem.itemID} onClick={() => increaseQuantity(id)}><FontAwesomeIcon icon={faArrowUp} name= {menuItem.id} /></Button>
+                        <span className='counter'>{menuItem.itemQuantity}</span>
+                        <Button className='plus-minus-button' name= {menuItem.itemID} onClick={() => decreaseQuantity(id)}><FontAwesomeIcon icon={faArrowDown} name= {menuItem.id} /></Button>
                     </div>
                 </Card.Body>
             </Card>
@@ -75,8 +83,22 @@ const Landing = () => {
 
     //Takes the ID of the menu item we want to increase the quantity of in the cart, and then increments it up by one. 
     const increaseQuantity = (id) =>{
-        if(itemCart[id] < 9){
-            setItemCart(prevCart => ({ ...prevCart, [id]: prevCart[id] + 1 }))
+        if(menuItems[id].itemQuantity < 9){
+
+
+
+            // setMenuItems(prevMenuItems => ({ ...prevMenuItems, [id]: prevMenuItems[id].itemQuantity + 1 }))
+
+            // this.setState(prevState => ({
+            //     food: {
+            //       ...prevState.food,           // copy all other key-value pairs of food object
+            //       pizza: {                     // specific object of food object
+            //         ...prevState.food.pizza,   // copy all pizza key-value pairs
+            //         extraCheese: true          // update value of specific key
+            //       }
+            //     }
+            //   }))
+
         }
     }
 
@@ -97,22 +119,17 @@ const Landing = () => {
     }
 
     const renderCart = (itemCart) => {
-        return  Object.keys(itemCart).map((quantity,i) => {
-            console.log('Item cart')
-            console.log(itemCart)
-            console.log('QUantity')
-            console.log(quantity)
-            console.log('i')
-            console.log(i)
+
+        return  Object.keys(itemCart).map((itemCartID,i) => {
+
             return(
             <tr key={i}>
-                <td>{itemCart[i]}</td>
-                <td>test</td>
+                <td></td>
+                <td>{itemCart[itemCartID]}</td>
                 <td>test</td>
             </tr>
             )
         })
-
     }
 
     return (
@@ -125,31 +142,30 @@ const Landing = () => {
                 <h2>Noodles</h2>
                 <Container fluid>
                     <Row>
-                        {menuItems.map( menuItem =>{
-                            return menuItem.item_type === 'noodle' ?
-                                createCard(menuItem) : null 
-                            } 
-                        )}
+                    {Object.keys(menuItems).map(function(itemID, keyIndex) {
+                            return menuItems[itemID].itemType === 'noodle' ?
+                                createCard(menuItems[itemID]) : null
+                    })}
                     </Row>
                 </Container>
                 <h2>Snacks</h2>
                 <Container fluid>
                     <Row>
-                        {menuItems.map( menuItem =>{
+                        {/* {menuItems.map( menuItem =>{
                             return menuItem.item_type === 'snack' ?
                                 createCard(menuItem) : null
                             } 
-                        )}
+                        )} */}
                     </Row>
                 </Container>
                 <h2>Drinks</h2>
                 <Container fluid>
                     <Row>
-                        {menuItems.map( menuItem =>{
+                        {/* {menuItems.map( menuItem =>{
                             return menuItem.item_type === 'drink' ?
                                 createCard(menuItem) : null
                             } 
-                        )}
+                        )} */}
                     </Row>
                 </Container>
                 <ToastContainer position='top-left' />
