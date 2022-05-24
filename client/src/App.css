@@ -35,3 +35,11 @@
 .plus-minus-button{
     margin: 5px;
 }
+
+.counter{
+    border-style:solid;
+    margin: 3px;
+    padding: 3px;
+    border-radius: 15px;
+}
+
