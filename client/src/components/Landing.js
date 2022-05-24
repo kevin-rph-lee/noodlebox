@@ -15,11 +15,10 @@ const Landing = () => {
     const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
 
     const [menuItems, setMenuItems] = useState({})
-    const [itemCart, setItemCart] = useState({})
     const axiosPrivate = useAxiosPrivate()    
     const handleSubmitOrderModalShow = () => setSubmitOrderModal(true);
     const handleSubmitOrderModalClose = () => setSubmitOrderModal(false);
-    const { setAuth, auth } = useAuth()
+    const {auth } = useAuth()
 
     useEffect(() => {
         let isMounted = true;
@@ -55,10 +54,13 @@ const Landing = () => {
         }
     }, [])
 
+    //Generates the cards taht contain the menu items
     const createCard = (menuItem) =>{
+
+        //Create image file path
         let itemImg = `/${menuItem.itemID}.jpg`
+
         let id = menuItem.itemID
-        // let numberInCart = 
 
         return (
             <Card style={{ width: '18rem' }} className='menu-item' key={menuItem.id} >
@@ -82,6 +84,7 @@ const Landing = () => {
 
     //Takes the ID of the menu item we want to increase the quantity of in the cart, and then increments it up by one. 
     const increaseQuantity = (id) =>{
+        //Maximum quantity of items ordered is 9
         if(menuItems[id].itemQuantity < 9){
             const newMenuItem = menuItems[id]
             newMenuItem.itemQuantity ++
@@ -89,7 +92,9 @@ const Landing = () => {
         }
     }
 
+    //Takes the ID of the menu item we want to decrease the quantity of in the cart, and then decrease it up by one. 
     const decreaseQuantity = (id) =>{
+        //Minimum quantityi of items ordered is 0
         if(menuItems[id].itemQuantity > 0){
             const newMenuItem = menuItems[id]
             newMenuItem.itemQuantity --
@@ -97,21 +102,29 @@ const Landing = () => {
         }
     }
 
+    //Opens the cart modal when the Order button is clicked
     const openCart = () => {
+        //Check if there are any menu items with a quantity over 0
         for (const menuItemID in menuItems) {
             if(menuItems[menuItemID].itemQuantity > 0){
-                if(auth.role !== 'user' ){
+                //Throw error if the user is not logged in
+                if(!auth.role){
                     toast.error(`Must be logged in`, {theme: 'colored'})
                     return
                 } else {
+                    //Open modal once we find at least one item with items in the cart
                     handleSubmitOrderModalShow()
                     return
                 }
             }
         }
+
+        //Throw error message if there are no menu items with any quantity over 0
         toast.error(`No items in cart!`, {theme: 'colored'})
+        
     }
 
+    //Calculate the total price of the order
     const calculateTotalPrice = () => {
         let totalPrice = 0
         for (const menuItemID in menuItems) {
@@ -120,10 +133,21 @@ const Landing = () => {
         return totalPrice
     }
 
-    const submitOrder = () => {
+    //Submit the order to the back end
+    const submitOrder = async () => {
+
+        await axiosPrivate.post('/orders', {menuItems});
         toast.success(`Order Submitted! (not really)`, {theme: 'colored'})
+
+        //Clear the item quantities from the cart
+        for (const menuItemID in menuItems) {
+            const newMenuItem = menuItems[menuItemID]
+            newMenuItem.itemQuantity = 0
+            setMenuItems(prevInputs => Object.assign({}, prevInputs, {[menuItemID]: newMenuItem }));
+        }
     }
 
+    //Render the table within the cart showing menu items in the cart
     const renderCart = (menuItems) => {
         return  Object.keys(menuItems).map((menuID,i) => {
             if(menuItems[menuID].itemQuantity > 0){
