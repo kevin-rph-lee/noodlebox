@@ -10,10 +10,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import Modal from 'react-bootstrap/Modal'
 import useAuth from '../hooks/useAuth'
 import Table from 'react-bootstrap/Table'
+import { useNavigate } from 'react-router-dom'
 
 const Landing = () => {
     const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
-
+    const navigate = useNavigate()
     const [menuItems, setMenuItems] = useState({})
     const axiosPrivate = useAxiosPrivate()    
     const handleSubmitOrderModalShow = () => setSubmitOrderModal(true);
@@ -63,7 +64,7 @@ const Landing = () => {
         let id = menuItem.itemID
 
         return (
-            <Card style={{ width: '18rem' }} className='menu-item' key={menuItem.id} >
+            <Card style={{ width: '18rem' }} className='menu-item' key={menuItem.itemID} >
                 <Card.Img variant="top" src= {itemImg} />
                 <Card.Body>
                     <Card.Title>{menuItem.itemName}</Card.Title>
@@ -124,6 +125,19 @@ const Landing = () => {
         
     }
 
+    //Opens the cart modal when the Order button is clicked
+    const navigateToOrders = () => {
+        //Throw error if the user is not logged in
+        if(!auth.role){
+            toast.error(`Must be logged in`, {theme: 'colored'})
+            return
+        } else {
+            navigate('/orders')
+        }
+        
+    }
+    
+
     //Calculate the total price of the order
     const calculateTotalPrice = () => {
         let totalPrice = 0
@@ -137,7 +151,7 @@ const Landing = () => {
     const submitOrder = async () => {
 
         await axiosPrivate.post('/orders', {menuItems});
-        toast.success(`Order Submitted! (not really)`, {theme: 'colored'})
+        toast.success(`Order Submitted!`, {theme: 'colored'})
 
         //Clear the item quantities from the cart
         for (const menuItemID in menuItems) {
@@ -168,7 +182,8 @@ const Landing = () => {
             <div className='main'>
                 <div className='page-title'>
                     <h1>Menu</h1>
-                    <Button variant='success' onClick={openCart}>Order!</Button>
+                    <Button className='title-button' variant='primary' onClick={openCart}>Submit order!</Button>
+                    <Button className='title-button' variant='primary' onClick={navigateToOrders}>See orders</Button>
                 </div>
                 <h2>Noodles</h2>
                 <Container fluid>
