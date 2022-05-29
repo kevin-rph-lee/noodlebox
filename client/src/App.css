@@ -43,3 +43,25 @@
     border-radius: 15px;
 }
 
+.order{
+    border-style:solid;
+    margin: 35px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.order-title{
+    font-size: x-large;
+}
+
+.title-button{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.empty-orders{
+    border-style:solid;
+    margin: 35px;
+    padding: 20px;
+    border-radius: 15px;
+}

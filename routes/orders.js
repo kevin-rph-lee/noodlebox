@@ -7,7 +7,11 @@ const verifyRoles = require('../middleware/verifyRoles');
 
 module.exports = () => {
 
-  //Get menu items
+  //Get order
+  router.route('/')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getOrders)  
+
+  //Create order
   router.route('/')
     .post(verifyJWT, verifyRoles('user', 'admin'), ordersController.createOrder)  
   

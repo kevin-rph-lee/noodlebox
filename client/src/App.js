@@ -8,6 +8,7 @@ import Admin from './components/Admin';
 import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
+import Orders from './components/Orders';
 
 function App() {
 
@@ -22,6 +23,9 @@ function App() {
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
             <Route path="/users">
               <Route index element={<Profile />} />
+            </Route>
+            <Route path="/orders">
+              <Route index element={<Orders />} />
             </Route>
           </Route>
 

@@ -132,6 +132,7 @@ const AppNavBar = () => {
   }else if(auth.role === 'admin'){
     navBarItems = [
       <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
+      <Dropdown.Item key={'orders'} onClick={()=>{navigate('/orders')}}>Orders</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
       <Dropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
@@ -139,6 +140,7 @@ const AppNavBar = () => {
   } else if(auth.role === 'user'){
     navBarItems = [
       <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
+      <Dropdown.Item key={'orders'} onClick={()=>{navigate('/orders')}}>Orders</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
