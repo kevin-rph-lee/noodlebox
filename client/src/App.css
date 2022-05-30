@@ -1,5 +1,6 @@
 .main{
-    padding: 30px;
+    padding: 80px 30px 30px 30px;
+
 }
 
 .username-span{
@@ -64,4 +65,16 @@
     margin: 35px;
     padding: 20px;
     border-radius: 15px;
+}
+
+.right-aligned{
+    justify-content:  flex-end;
+}
+
+.credits{
+    cursor: pointer;
+}
+
+.footer{
+    height: 35px;
 }
