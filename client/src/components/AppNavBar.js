@@ -152,7 +152,7 @@ const AppNavBar = () => {
 
   return (
     <>
-    <Navbar variant='dark' bg='dark'>
+    <Navbar variant='dark' bg='dark' fixed='top'>
       <Container fluid>
         <Navbar.Brand onClick={()=>{navigate('/')}} className='app-title'>🍜 The Noodle Box</Navbar.Brand>
         <Nav>
