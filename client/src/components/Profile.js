@@ -78,6 +78,7 @@ const Profile = () => {
     return (
         <>
             <div className='main'>
+                <h1>Your Profile: </h1>
                 <Card style={{ width: '18rem' }}>
                     <Card.Body>
                         <Card.Title><b>Username: </b>{userInfo.userName}</Card.Title>

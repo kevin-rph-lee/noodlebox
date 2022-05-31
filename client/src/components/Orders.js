@@ -56,6 +56,15 @@ const Orders = () => {
         return total
     }
 
+    const checkFinishedOrders = (orders) =>{
+        for(let i = 0; i < orders.length; i++){
+            if(orders[i].order_completed){
+                return true
+            }
+        }
+        return false
+    }
+
 
     return (
         <>
@@ -85,7 +94,7 @@ const Orders = () => {
                 )   :
             <p className='empty-orders'>No pending orders</p>}
             <h1>Finished Orders</h1>
-            {(orders.length > 0) ?
+            {(checkFinishedOrders(orders)) ?
                 orders.map((order, i) =>(
                     order.order_completed ? 
                     <div className= 'order' key={order.id}>
