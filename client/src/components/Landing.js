@@ -42,7 +42,6 @@ const Landing = () => {
                         itemQuantity: 0
                     }
                 }
-
                 isMounted && setMenuItems(newMenuItems)
             } catch (err) {
                 console.log(err)

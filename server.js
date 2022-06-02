@@ -10,6 +10,14 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
+// Websocket
+// Importing the required modules
+const WebSocketServer = require('ws');
+
+// Creating a new websocket server
+const wss = new WebSocketServer.Server({ port: 3002 })
+
+
 // PG database client/connection setup
 
 const { Pool } = require('pg');
@@ -56,6 +64,36 @@ app.use('/orders', ordersRoutes());
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
+
+
+// Creating connection using websocket
+wss.on("connection", (ws) => {
+  console.log('Client connected, current # of clients', wss.clients.size);
+  //Tracking how many users have connected to the system
+
+  function sendMessageToOpenClients(messageObj){
+    wss.clients.forEach((client) => {
+      if (client.readyState === ws.OPEN) {
+        client.send(JSON.stringify(messageObj));
+      }
+    });
+  }
+
+  ws.on('message', function incoming(data) {
+    const message = JSON.parse(data);
+    //Adding ID number
+    console.log(message);
+    sendMessageToOpenClients(message);
+  });
+
+  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+  ws.on('close', function(){
+    console.log('Client disconnected, current # of clients', wss.clients.size);
+
+  });
+});
+console.log("The WebSocket server is running on port 3002");
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

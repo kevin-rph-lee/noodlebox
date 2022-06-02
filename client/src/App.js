@@ -9,8 +9,17 @@ import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
+
+const client = new W3CWebSocket('ws://127.0.0.1:3002');
 
 function App() {
+
+
+  //Initial websocket connection
+  client.onopen = () => {
+    console.log('WebSocket Client Connected');
+  };
 
   return (
     <Routes>
