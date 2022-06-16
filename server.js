@@ -68,10 +68,11 @@ app.get('*', (req, res) => {
 
 // Creating connection using websocket
 wss.on("connection", (ws) => {
-  console.log('Client connected, current # of clients', wss.clients.size);
   //Tracking how many users have connected to the system
-
-  function sendMessageToOpenClients(messageObj){
+  console.log('Client connected, current # of clients', wss.clients.size);
+  
+  //function used to transmitt a message to all connected clients
+  sendMessageToOpenClients =(messageObj) => {
     wss.clients.forEach((client) => {
       if (client.readyState === ws.OPEN) {
         client.send(JSON.stringify(messageObj));
@@ -79,12 +80,15 @@ wss.on("connection", (ws) => {
     });
   }
 
+  //Recieving a websocket message from client and resending it to all connected clients
   ws.on('message', function incoming(data) {
     const message = JSON.parse(data);
-    //Adding ID number
+    //Logging out the message
     console.log(message);
+    //Running function message to all clients
     sendMessageToOpenClients(message);
   });
+  
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', function(){

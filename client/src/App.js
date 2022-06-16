@@ -15,25 +15,22 @@ const wsClient = new W3CWebSocket('ws://127.0.0.1:3002');
 
 function App() {
 
-
-  //Initial websocket connection
-  // wsClient.onopen = () => {
-  //   console.log('WebSocket Client Connected');
-
-
-  // };
-
-
-  const test = () => {
-    wsClient.send('test')
+  //Test function to sund a dummy websocket message to the server
+  const testSend = () => {
+    wsClient.send(`{"test1":"test1", "test2":"test2"}`)
   }
 
+  //Console logging out any recieved websocket messages
+  wsClient.onmessage = (msg) => {
+    console.log(msg.data)
+ }
+ 
   return (
     <Routes>
 
       <Route element = {<PersistLogin />}>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Landing test={this.test}/>} />
+          <Route index element={<Landing testSend={testSend}/>} />
         <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
