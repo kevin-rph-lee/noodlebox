@@ -10,6 +10,13 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
+// PG database client/connection setup
+
+const { Pool } = require('pg');
+const dbParams = require('./lib/db.js');
+const db = new Pool(dbParams);
+db.connect();
+
 // Websocket
 // Importing the required modules
 const WebSocketServer = require('ws');
@@ -18,12 +25,37 @@ const WebSocketServer = require('ws');
 const wss = new WebSocketServer.Server({ port: 3002 })
 
 
-// PG database client/connection setup
 
-const { Pool } = require('pg');
-const dbParams = require('./lib/db.js');
-const db = new Pool(dbParams);
-db.connect();
+// Creating connection using websocket
+wss.on("connection", (ws) => {
+  //Tracking how many users have connected to the system
+  console.log('Client connected, current # of clients', wss.clients.size);
+  
+  //function used to transmitt a message to all connected clients
+  sendMessageToOpenClients =(messageObj) => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === ws.OPEN) {
+        client.send(JSON.stringify(messageObj));
+      }
+    });
+  }
+
+  //Recieving a websocket message from client and resending it to all connected clients
+  ws.on('message', function incoming(data) {
+    const message = JSON.parse(data);
+    //Logging out the message
+    console.log(message);
+    //Running function message to all clients
+    sendMessageToOpenClients(message);
+  });
+  
+
+  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+  ws.on('close', function(){
+    console.log('Client disconnected, current # of clients', wss.clients.size);
+
+  });
+});
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -64,40 +96,6 @@ app.use('/orders', ordersRoutes());
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
-
-
-// Creating connection using websocket
-wss.on("connection", (ws) => {
-  //Tracking how many users have connected to the system
-  console.log('Client connected, current # of clients', wss.clients.size);
-  
-  //function used to transmitt a message to all connected clients
-  sendMessageToOpenClients =(messageObj) => {
-    wss.clients.forEach((client) => {
-      if (client.readyState === ws.OPEN) {
-        client.send(JSON.stringify(messageObj));
-      }
-    });
-  }
-
-  //Recieving a websocket message from client and resending it to all connected clients
-  ws.on('message', function incoming(data) {
-    const message = JSON.parse(data);
-    //Logging out the message
-    console.log(message);
-    //Running function message to all clients
-    sendMessageToOpenClients(message);
-  });
-  
-
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', function(){
-    console.log('Client disconnected, current # of clients', wss.clients.size);
-
-  });
-});
-console.log("The WebSocket server is running on port 3002");
-
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

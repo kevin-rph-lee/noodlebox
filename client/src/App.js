@@ -11,11 +11,11 @@ import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
-const wsClient = new W3CWebSocket('ws://127.0.0.1:3002');
+const wsClient = new W3CWebSocket('wss://noodlebox.herokuapp.com:3002');
 
 function App() {
 
-  //Test function to sund a dummy websocket message to the server
+  //Test function to send a dummy websocket message to the server
   const testSend = () => {
     wsClient.send(`{"test1":"test1", "test2":"test2"}`)
   }
@@ -24,7 +24,7 @@ function App() {
   wsClient.onmessage = (msg) => {
     console.log(msg.data)
  }
- 
+
   return (
     <Routes>
 
