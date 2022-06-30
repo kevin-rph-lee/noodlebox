@@ -11,7 +11,7 @@ import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
-const wsClient = new W3CWebSocket('wss://noodlebox.herokuapp.com:3002');
+const wsClient = new W3CWebSocket('wss://noodlebox.herokuapp.com/:5000');
 
 function App() {
 

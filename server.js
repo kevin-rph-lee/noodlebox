@@ -1,5 +1,8 @@
 require('dotenv').config();
 
+const WebSocketServer = require("ws").Server
+var http = require("http")
+
 const express = require('express');
 const path = require('path');
 const PORT = process.env.PORT || 3001;
@@ -10,20 +13,18 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
+// Creating a new websocket server
+var server = http.createServer(app)
+server.listen(5000)
+var wss = new WebSocketServer({server: server})
+
+
 // PG database client/connection setup
 
 const { Pool } = require('pg');
 const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
 db.connect();
-
-// Websocket
-// Importing the required modules
-const WebSocketServer = require('ws');
-
-// Creating a new websocket server
-const wss = new WebSocketServer.Server({ port: 3002 })
-
 
 
 // Creating connection using websocket
