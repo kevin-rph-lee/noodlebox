@@ -13,11 +13,9 @@ const corsOptions = require('./config/corsOptions');
 const credentials = require('./middleware/credentials');
 const cookieParser = require('cookie-parser');
 
-// Creating a new websocket server
-var server = http.createServer(app)
-server.listen(5000)
-var wss = new WebSocketServer({server: server})
-
+// Creating a new socketio server
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 // PG database client/connection setup
 
@@ -26,37 +24,6 @@ const dbParams = require('./lib/db.js');
 const db = new Pool(dbParams);
 db.connect();
 
-
-// Creating connection using websocket
-wss.on("connection", (ws) => {
-  //Tracking how many users have connected to the system
-  console.log('Client connected, current # of clients', wss.clients.size);
-  
-  //function used to transmitt a message to all connected clients
-  sendMessageToOpenClients =(messageObj) => {
-    wss.clients.forEach((client) => {
-      if (client.readyState === ws.OPEN) {
-        client.send(JSON.stringify(messageObj));
-      }
-    });
-  }
-
-  //Recieving a websocket message from client and resending it to all connected clients
-  ws.on('message', function incoming(data) {
-    const message = JSON.parse(data);
-    //Logging out the message
-    console.log(message);
-    //Running function message to all clients
-    sendMessageToOpenClients(message);
-  });
-  
-
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', function(){
-    console.log('Client disconnected, current # of clients', wss.clients.size);
-
-  });
-});
 
 // Load the logger first so all (static) HTTP requests are logged to STDOUT
 // 'dev' = Concise output colored by response status for development use.
@@ -71,11 +38,11 @@ app.use(express.json()); // => allows us to access the req.body
 //middleware for cookies
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === 'production') {
-  //server static content
-  //npm run build
-  app.use(express.static(path.join(__dirname, 'client/build')));
-}
+// if (process.env.NODE_ENV === 'production') {
+//   //server static content
+//   //npm run build
+//   app.use(express.static(path.join(__dirname, 'client/build')));
+// }
 
 console.log(__dirname);
 console.log(path.join(__dirname, 'client/build'));
@@ -98,6 +65,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server listening on ${PORT}`);
+// });
+
+io.on('connection', function(socket){
+  io.emit('message from server', 'message from server - it works!')
+  })
+server.listen(PORT);
