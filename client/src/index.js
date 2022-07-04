@@ -13,12 +13,18 @@ socket.on('message from server', function(msg){
   console.log(msg)
 }); 
 
+
+
+const testSend = () => {
+  socket.emit("message from client", "world");
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/*" element={<App />} />
+          <Route path="/*" element={<App testSend={testSend} />} />
         </Routes>
       </Router>
     </AuthProvider>

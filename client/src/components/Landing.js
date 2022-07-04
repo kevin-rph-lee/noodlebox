@@ -12,7 +12,7 @@ import useAuth from '../hooks/useAuth'
 import Table from 'react-bootstrap/Table'
 import { useNavigate } from 'react-router-dom'
 
-const Landing = () => {
+const Landing = ({testSend}) => {
     const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
     const navigate = useNavigate()
     const [menuItems, setMenuItems] = useState({})
@@ -183,6 +183,8 @@ const Landing = () => {
                     <h1>Menu</h1>
                     <Button className='title-button' variant='primary' onClick={openCart}>Submit order!</Button>
                     <Button className='title-button' variant='primary' onClick={navigateToOrders}>See orders</Button>
+                    <Button className='title-button' variant='primary' onClick={testSend}>Send test Websocket message</Button>
+
                 </div>
                 <h2>Noodles</h2>
                 <Container fluid>

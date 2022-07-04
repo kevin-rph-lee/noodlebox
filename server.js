@@ -65,11 +65,24 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
 
-// app.listen(PORT, () => {
-//   console.log(`Server listening on ${PORT}`);
-// });
+
+let clientsConnected = 0
 
 io.on('connection', function(socket){
-  io.emit('message from server', 'message from server - it works!')
-  })
+  clientsConnected++
+  console.log('Client connected. Total clients connected ' + clientsConnected)
+
+  socket.on("message from client", (arg) => {
+    console.log(arg); // world
+  });
+
+
+  socket.on("disconnect", (reason) => {
+    clientsConnected--
+    console.log('Client connected. Total clients connected ' + clientsConnected)
+  });
+})
+
+
+
 server.listen(PORT);

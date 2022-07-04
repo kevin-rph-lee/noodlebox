@@ -9,15 +9,22 @@ import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
+import io from 'socket.io-client'
+
+let socket = io("/");
 
 function App() {
+
+  const testSend = () => {
+    socket.emit("message from client", "world");
+  }
 
   return (
     <Routes>
 
       <Route element = {<PersistLogin />}>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Landing />} />
+          <Route index element={<Landing testSend={testSend}/>} />
         <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
