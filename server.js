@@ -38,11 +38,11 @@ app.use(express.json()); // => allows us to access the req.body
 //middleware for cookies
 app.use(cookieParser());
 
-// if (process.env.NODE_ENV === 'production') {
-//   //server static content
-//   //npm run build
-//   app.use(express.static(path.join(__dirname, 'client/build')));
-// }
+if (process.env.NODE_ENV === 'production') {
+  //server static content
+  //npm run build
+  app.use(express.static(path.join(__dirname, 'client/build')));
+}
 
 console.log(__dirname);
 console.log(path.join(__dirname, 'client/build'));

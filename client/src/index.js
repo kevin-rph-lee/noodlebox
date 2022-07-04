@@ -10,7 +10,7 @@ import io from 'socket.io-client'
 let socket = io("/");
 
 socket.on('message from server', function(msg){
-  alert(msg) 
+  console.log(msg)
 }); 
 
 ReactDOM.render(
