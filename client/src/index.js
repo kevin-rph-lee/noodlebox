@@ -7,24 +7,21 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import {AuthProvider} from './context/AuthProvider';
 import io from 'socket.io-client'
 
+//Creating socket
 let socket = io("/");
 
-socket.on('message from server', function(msg){
-  console.log(msg)
+//Recieving a new message from server
+socket.on('message to client', function(msg){
+  console.log('recieved message ', msg)
 }); 
 
-
-
-const testSend = () => {
-  socket.emit("message from client", "world");
-}
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/*" element={<App testSend={testSend} />} />
+          <Route path="/*" element={<App socket={socket} />} />
         </Routes>
       </Router>
     </AuthProvider>

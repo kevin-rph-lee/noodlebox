@@ -9,21 +9,18 @@ import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
-import io from 'socket.io-client'
 
-let socket = io("/");
 
-function App() {
+
+
+function App({socket}) {
 
   const testSend = () => {
     socket.emit("message from client", "world");
+    console.log('test')
   }
 
-  socket.on('message to client', function(msg){
-    console.log(msg)
-  }); 
-  
-  
+
 
   return (
     <Routes>

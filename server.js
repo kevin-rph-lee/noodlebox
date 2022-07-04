@@ -65,18 +65,21 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));
 });
 
-
+//Numbers of users connected. Initially 0
 let clientsConnected = 0
 
 io.on('connection', function(socket){
+  //Client connecting, incrementing client counter
   clientsConnected++
   console.log('Client connected. Total clients connected ' + clientsConnected)
 
+  //When a message is recieved from a client, echo it to all other clients connected
   socket.on("message from client", (arg) => {
     console.log(arg)
-    socket.emit("message to client", arg);
+    socket.broadcast.emit('message to client', arg)
   });
 
+  //Deincrement the counter when the client disconnects
   socket.on("disconnect", (reason) => {
     clientsConnected--
     console.log('Client connected. Total clients connected ' + clientsConnected)
