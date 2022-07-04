@@ -19,6 +19,12 @@ function App() {
     socket.emit("message from client", "world");
   }
 
+  socket.on('message to client', function(msg){
+    console.log(msg)
+  }); 
+  
+  
+
   return (
     <Routes>
 

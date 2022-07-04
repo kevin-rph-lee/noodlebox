@@ -73,9 +73,9 @@ io.on('connection', function(socket){
   console.log('Client connected. Total clients connected ' + clientsConnected)
 
   socket.on("message from client", (arg) => {
-    console.log(arg); // world
+    console.log(arg)
+    socket.emit("message to client", arg);
   });
-
 
   socket.on("disconnect", (reason) => {
     clientsConnected--
