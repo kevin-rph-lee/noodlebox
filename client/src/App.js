@@ -9,6 +9,7 @@ import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
+import OrdersAdmin from './components/OrdersAdmin';
 
 
 
@@ -36,6 +37,9 @@ function App({socket}) {
             </Route>
             <Route path="/orders">
               <Route index element={<Orders />} />
+            </Route>
+            <Route path="/orders-admin">
+              <Route index element={<OrdersAdmin />} />
             </Route>
           </Route>
 

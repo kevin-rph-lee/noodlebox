@@ -75,4 +75,37 @@ const createOrder = async (req, res) => {
     res.sendStatus(200)
 }
 
-module.exports = { createOrder, getOrders }
+//Get orders owned by a single user
+const getAllOrders = async (req, res) => {
+
+    //SQL strings for getting the orders and ordered items
+    let SQLStringGetOrder = `SELECT o.id, u.user_name, o.order_completion, o.order_created_datetime FROM orders as o INNER JOIN users AS u ON o.user_id = u.id;`
+    let SQLStringGetOrderedItems = `SELECT * FROM orders AS o INNER JOIN ordered_items AS oi ON o.id = oi.order_id INNER JOIN menu_items AS mi ON mi.id = oi.menu_item_id;`
+    
+    //Getting the orders and ordered items
+    const ordersData= await db.query(SQLStringGetOrder)
+    const orderedItems = await db.query(SQLStringGetOrderedItems)
+
+    console.log(ordersData.rows)
+
+    //Reversing the orders to get the newest order first
+    const orders = ordersData['rows']
+    orders.reverse()
+
+    //Creating an array in the orders object and adding in all of the ordered items
+    for(let i in orders){
+        orders[i]['orderedItems'] = []
+        for(let y in orderedItems['rows']){
+            if(orderedItems['rows'][y].order_id === orders[i]['id']){
+                orders[i]['orderedItems'].push(orderedItems['rows'][y])
+            }
+        }
+        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
+    }
+    
+    res.json(orders)
+
+}
+
+
+module.exports = { createOrder, getOrders, getAllOrders }

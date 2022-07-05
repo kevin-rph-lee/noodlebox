@@ -11,6 +11,10 @@ module.exports = () => {
   router.route('/')
     .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getOrders)  
 
+  //Get all order
+  router.route('/admin')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getAllOrders)  
+
   //Create order
   router.route('/')
     .post(verifyJWT, verifyRoles('user', 'admin'), ordersController.createOrder)  
