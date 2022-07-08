@@ -13,11 +13,14 @@ module.exports = () => {
 
   //Get all order
   router.route('/admin')
-    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getAllOrders)  
+    .get(verifyJWT, verifyRoles('admin'),ordersController.getAllOrders)  
 
   //Create order
   router.route('/')
     .post(verifyJWT, verifyRoles('user', 'admin'), ordersController.createOrder)  
+  
+  router.route('/complete')
+    .post(verifyJWT, verifyRoles('admin'), ordersController.completeOrder)  
   
   return router;
 };

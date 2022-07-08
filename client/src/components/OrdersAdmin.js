@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
-
+import Button from 'react-bootstrap/Button'
+import { ToastContainer, toast } from 'react-toastify'
 
 const OrdersAdmin = () => {
     const [orders, setOrders] = useState([])
@@ -35,6 +36,11 @@ const OrdersAdmin = () => {
             controller.abort();
         }
     }, [])
+
+    const completeOrder = async (id) => {
+        await axiosPrivate.post('/orders/complete', {orderID: id});
+        toast.success(`Order completed!`, {theme: 'colored'})
+    }
 
     //Render the ordered items within the order cart
     const renderOrderedItems = (orderedItems) => {
@@ -91,7 +97,10 @@ const OrdersAdmin = () => {
                                 {renderOrderedItems(order.orderedItems)}
                             </tbody>
                         </Table>
-                        <span>Order total: <b>${calculateTotal(order.orderedItems)}</b> </span>
+                        <span>Order total: <b>${calculateTotal(order.orderedItems)}</b></span>
+                        <div className='complete-order-button'>
+                            <Button onClick={()=>completeOrder(order.id)} variant="primary">Complete Order</Button>
+                        </div>
                     </div>
                     : null)
                 )   :

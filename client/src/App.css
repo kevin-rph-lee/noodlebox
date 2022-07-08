@@ -78,3 +78,8 @@
 .footer{
     height: 35px;
 }
+
+.complete-order-button{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

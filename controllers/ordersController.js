@@ -104,8 +104,13 @@ const getAllOrders = async (req, res) => {
     }
     
     res.json(orders)
+}
 
+//Get orders owned by a single user
+const completeOrder = async (req, res) => {
+    console.log(req.body.orderID)
+    res.sendStatus(200)
 }
 
 
-module.exports = { createOrder, getOrders, getAllOrders }
+module.exports = { createOrder, getOrders, getAllOrders, completeOrder }

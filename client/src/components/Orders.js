@@ -20,6 +20,7 @@ const Orders = () => {
                 const response = await axiosPrivate.get('/orders', {
                     signal: controller.signal
                 });
+                console.log(response.data)
                 isMounted && setOrders(response.data);
 
             } catch (err) {
@@ -72,7 +73,7 @@ const Orders = () => {
             <h1>Pending Orders</h1>
             {(orders.length > 0) ?
                 orders.map((order, i) =>(
-                    !order.order_completed ? 
+                    (order.order_completion === false) ? 
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
                         <Table striped bordered hover>
@@ -96,7 +97,7 @@ const Orders = () => {
             <h1>Finished Orders</h1>
             {(checkFinishedOrders(orders)) ?
                 orders.map((order, i) =>(
-                    order.order_completed ? 
+                    (order.id === 1) ? 
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
                         <Table striped bordered hover>

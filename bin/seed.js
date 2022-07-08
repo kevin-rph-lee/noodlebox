@@ -29,6 +29,17 @@ let SQLStringInsertMenuItemsSeed = `INSERT INTO menu_items(item_name, item_type,
                           ('Bubble Tea', 'drink', 4.5, 'test', 'Ask server for available flavours'), 
                           ('Viet Coffee', 'drink', 4, 'test', 'Extra strong');`
 
+let SQLStringInsertOrdersSeed = `INSERT INTO orders(user_ID, order_completion) 
+                          VALUES(2, false),
+                          (3, true)`
+
+let SQLStringInsertOrderedItemsSeed = `INSERT INTO ordered_items(order_id, menu_item_id, quantity) 
+                          VALUES(1,1,1),
+                          (1,2,2),
+                          (1,3,2),
+                          (2,4,4),
+                          (2,2,1)`
+
 
 function seedUsers(){
   return new Promise((resolve) =>{
@@ -56,9 +67,39 @@ function seedMenuItems(){
   })
 }
 
+
+function seedOrders(){
+  return new Promise((resolve) =>{
+    db.query(SQLStringInsertOrdersSeed)
+    .then( () => {
+      console.log('Orders seed successful')
+      resolve()
+    }).catch(err => {
+      console.log('ERROR: ')
+      console.log(err)
+    });
+  })
+}
+
+
+function seedOrderedItems(){
+  return new Promise((resolve) =>{
+    db.query(SQLStringInsertOrderedItemsSeed)
+    .then( () => {
+      console.log('Ordered Items seed successful')
+      resolve()
+    }).catch(err => {
+      console.log('ERROR: ')
+      console.log(err)
+    });
+  })
+}
+
 async function seedData() {
   await seedUsers();
   await seedMenuItems();
+  await seedOrders();
+  await seedOrderedItems();
   db.end();
   console.log('Seeds successful')
   return;
