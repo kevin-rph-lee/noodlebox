@@ -31,14 +31,16 @@ let SQLStringInsertMenuItemsSeed = `INSERT INTO menu_items(item_name, item_type,
 
 let SQLStringInsertOrdersSeed = `INSERT INTO orders(user_ID, order_completion) 
                           VALUES(2, false),
-                          (3, true)`
+                          (3, true),
+                          (2, false)`
 
 let SQLStringInsertOrderedItemsSeed = `INSERT INTO ordered_items(order_id, menu_item_id, quantity) 
                           VALUES(1,1,1),
                           (1,2,2),
                           (1,3,2),
                           (2,4,4),
-                          (2,2,1)`
+                          (2,2,1),
+                          (3,1,2)`
 
 
 function seedUsers(){

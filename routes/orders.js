@@ -11,6 +11,14 @@ module.exports = () => {
   router.route('/')
     .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getOrders)  
 
+  //Get pending order
+  router.route('/pending')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getPendingOrders)  
+
+  //Get pending order
+  router.route('/finished')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getFinishedOrders)  
+
   //Get all order
   router.route('/admin')
     .get(verifyJWT, verifyRoles('admin'),ordersController.getAllOrders)  
@@ -24,3 +32,6 @@ module.exports = () => {
   
   return router;
 };
+
+
+

@@ -7,6 +7,8 @@ import { ToastContainer, toast } from 'react-toastify'
 
 const OrdersAdmin = () => {
     const [orders, setOrders] = useState([])
+    const [pendingOrders, setPendingOrders] = useState([])
+    const [finishedOrders, setFinishedOrders] = useState([])
 
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
@@ -18,11 +20,17 @@ const OrdersAdmin = () => {
         //Get the orders and ordered items from the server
         const getOrders = async () => {
             try {
-                const response = await axiosPrivate.get('/orders/admin', {
+                const responseFinishedOrders = await axiosPrivate.get('/orders/finished', {
                     signal: controller.signal
                 });
-                console.log(response.data)
-                isMounted && setOrders(response.data);
+                const responsePendingOrders = await axiosPrivate.get('/orders/pending', {
+                    signal: controller.signal
+                });
+                setPendingOrders(responsePendingOrders.data)
+                setFinishedOrders(responseFinishedOrders.data)
+
+                isMounted = true;
+                // isMounted && setPendingOrders(getPendingOrders(responsePendingOrders.data))
 
             } catch (err) {
                 navigate('/', { state: { from: location }, replace: true });
@@ -63,23 +71,13 @@ const OrdersAdmin = () => {
         return total
     }
 
-    const checkFinishedOrders = (orders) =>{
-        for(let i = 0; i < orders.length; i++){
-            if(orders[i].order_completed){
-                return true
-            }
-        }
-        return false
-    }
-
-
     return (
         <>
             <div className='main'>
             <h1>Admin</h1>
             <h1>Pending Orders</h1>
-            {(orders.length > 0) ?
-                orders.map((order, i) =>(
+            {(pendingOrders.length > 0) ?
+                pendingOrders.map((order, i) =>(
                     !order.order_completed ? 
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
@@ -106,11 +104,12 @@ const OrdersAdmin = () => {
                 )   :
             <p className='empty-orders'>No pending orders</p>}
             <h1>Finished Orders</h1>
-            {(checkFinishedOrders(orders)) ?
-                orders.map((order, i) =>(
-                    order.order_completed ? 
+            {(finishedOrders.length > 0) ?
+                finishedOrders.map((order, i) =>(
+                    !order.order_completed ? 
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
+                        <p>Ordered by: {order.user_name}</p>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -124,7 +123,7 @@ const OrdersAdmin = () => {
                                 {renderOrderedItems(order.orderedItems)}
                             </tbody>
                         </Table>
-                        <span>Order total: <b>${calculateTotal(order.orderedItems)}</b> </span>
+                        <span>Order total: <b>${calculateTotal(order.orderedItems)}</b></span>
                     </div>
                     : null)
                 )   :
