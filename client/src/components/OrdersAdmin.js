@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button'
 import { ToastContainer, toast } from 'react-toastify'
 
 const OrdersAdmin = () => {
-    const [orders, setOrders] = useState([])
     const [pendingOrders, setPendingOrders] = useState([])
     const [finishedOrders, setFinishedOrders] = useState([])
 
@@ -20,10 +19,10 @@ const OrdersAdmin = () => {
         //Get the orders and ordered items from the server
         const getOrders = async () => {
             try {
-                const responseFinishedOrders = await axiosPrivate.get('/orders/finished', {
+                const responseFinishedOrders = await axiosPrivate.get('/orders/finished/all', {
                     signal: controller.signal
                 });
-                const responsePendingOrders = await axiosPrivate.get('/orders/pending', {
+                const responsePendingOrders = await axiosPrivate.get('/orders/pending/all', {
                     signal: controller.signal
                 });
                 setPendingOrders(responsePendingOrders.data)
@@ -74,8 +73,8 @@ const OrdersAdmin = () => {
     return (
         <>
             <div className='main'>
-            <h1>Admin</h1>
-            <h1>Pending Orders</h1>
+            <h1>Orders for All Users</h1>
+            <h2>Pending Orders</h2>
             {(pendingOrders.length > 0) ?
                 pendingOrders.map((order, i) =>(
                     !order.order_completed ? 
@@ -103,7 +102,7 @@ const OrdersAdmin = () => {
                     : null)
                 )   :
             <p className='empty-orders'>No pending orders</p>}
-            <h1>Finished Orders</h1>
+            <h2>Finished Orders</h2>
             {(finishedOrders.length > 0) ?
                 finishedOrders.map((order, i) =>(
                     !order.order_completed ? 
