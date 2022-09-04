@@ -17,7 +17,7 @@ function App({socket}) {
 
   const testSend = () => {
     socket.emit("message from client", "world");
-    console.log('test')
+    console.log('send test')
   }
 
 

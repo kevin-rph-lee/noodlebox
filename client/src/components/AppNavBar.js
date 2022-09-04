@@ -158,7 +158,7 @@ const AppNavBar = () => {
         <Nav>
           {auth.userName ? 
                     <Navbar.Text onClick={()=>{navigate('/users')}}>
-                      User: <a className='username-span'>{auth.userName}</a>
+                      User: <a className='username-span'>{auth.userID}</a>
                     </Navbar.Text> :
                     <Navbar.Text>
                      User: <a className='username-span'>Guest</a>
