@@ -75,9 +75,19 @@ io.on('connection', function(socket){
 
   //When a message is recieved from a client, echo it to all other clients connected
   socket.on("message from client", (arg) => {
+    console.log('reieved')
     console.log(arg)
-    socket.broadcast.emit('message to client', arg)
+    // socket.broadcast.emit('message to client', arg)
+    // socket.to(1).emit('message to client', 'enjoy the game')
+    io.in(1).emit('message to client', 'enjoy the game')
   });
+
+  socket.on("join", (userID) => {
+    socket.join(userID)
+    console.log('Rooms:')
+    console.log(socket.rooms)
+  });
+
 
   //Deincrement the counter when the client disconnects
   socket.on("disconnect", (reason) => {

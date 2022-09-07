@@ -16,7 +16,7 @@ import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 
-const AppNavBar = () => {
+const AppNavBar = ({joinSocketRoom}) => {
   
   const { setAuth, auth } = useAuth()
 
@@ -92,6 +92,7 @@ const AppNavBar = () => {
       //Sets user info within the auth state
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:'colored'})
+      joinSocketRoom(responseData.userID)
       handleCloseLoginModal() 
       navigate('/')
 
@@ -158,7 +159,7 @@ const AppNavBar = () => {
         <Nav>
           {auth.userName ? 
                     <Navbar.Text onClick={()=>{navigate('/users')}}>
-                      User: <a className='username-span'>{auth.userID}</a>
+                      User: <a className='username-span'>{auth.userName}</a>
                     </Navbar.Text> :
                     <Navbar.Text>
                      User: <a className='username-span'>Guest</a>

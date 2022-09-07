@@ -20,13 +20,17 @@ function App({socket}) {
     console.log('send test')
   }
 
+  const joinSocketRoom = (userID) => {
+    socket.emit("join", userID);
+    // console.log('joiniong room')
+  }
 
 
   return (
     <Routes>
 
       <Route element = {<PersistLogin />}>
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Layout joinSocketRoom = {joinSocketRoom} />}>
           <Route index element={<Landing testSend={testSend}/>} />
         <Route path="unauthorized" element={<Unauthorized />} />
 
