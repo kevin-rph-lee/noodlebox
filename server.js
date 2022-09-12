@@ -88,6 +88,12 @@ io.on('connection', function(socket){
     console.log(socket.rooms)
   });
 
+  socket.on("leave", (userID) => {
+    socket.leave(userID)
+    console.log('Rooms:')
+    console.log(socket.rooms)
+  });
+
 
   //Deincrement the counter when the client disconnects
   socket.on("disconnect", (reason) => {

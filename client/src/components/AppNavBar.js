@@ -2,7 +2,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Container from 'react-bootstrap/Container'
 import Modal from 'react-bootstrap/Modal'
-import {useState } from 'react'
+import {useState, useContext, useEffect } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
@@ -15,8 +15,10 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
+import { SocketContext} from './../context/SocketProvider'
 
-const AppNavBar = ({joinSocketRoom}) => {
+const AppNavBar = () => {
+  
   
   const { setAuth, auth } = useAuth()
 
@@ -34,6 +36,26 @@ const AppNavBar = ({joinSocketRoom}) => {
   const handleShowLoginModal = () => setShowLoginModal(true);
 
   const navigate = useNavigate()
+
+  const socket = useContext(SocketContext); 
+
+  useEffect(() => {
+    if(!auth.userName){
+      leaveSocketRoom(auth.userID)
+    } else {
+      joinSocketRoom(auth.userID)
+    }
+  }, [auth.userName])
+
+  const joinSocketRoom = (userID) => {
+    socket.emit("join", userID);
+    console.log('joiniong room')
+  }
+  
+  const leaveSocketRoom = (userID) => {
+    socket.emit("join", userID);
+    console.log('joiniong room')
+  }
 
   //Clear all forms in the modal
   const clearForms = () => {
@@ -73,6 +95,7 @@ const AppNavBar = ({joinSocketRoom}) => {
       const response = await axios.post('/users/register', {username: registerUsername, password: registerPassword}, {withCredentials: true})
       const responseData= response.data
       setAuth(responseData)
+      // joinSocketRoom(responseData.userID)
       toast.success('Registered successfully', {theme:'colored'})
       handleCloseRegistrationModal()
       
@@ -92,7 +115,8 @@ const AppNavBar = ({joinSocketRoom}) => {
       //Sets user info within the auth state
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:'colored'})
-      joinSocketRoom(responseData.userID)
+      console.log(response)
+      // joinSocketRoom(responseData.userID)
       handleCloseLoginModal() 
       navigate('/')
 
@@ -159,7 +183,7 @@ const AppNavBar = ({joinSocketRoom}) => {
         <Nav>
           {auth.userName ? 
                     <Navbar.Text onClick={()=>{navigate('/users')}}>
-                      User: <a className='username-span'>{auth.userName}</a>
+                      User: <a className='username-span'>{auth.userName} {auth.userID}</a>
                     </Navbar.Text> :
                     <Navbar.Text>
                      User: <a className='username-span'>Guest</a>

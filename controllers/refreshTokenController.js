@@ -39,7 +39,7 @@ const handleRefreshToken = (req, res) => {
                     { expiresIn: '900s' }
                 );
 
-                res.json({ accessToken, role, userName })
+                res.json({ accessToken, role, userName, userID })
             }
         );
     })

@@ -3,10 +3,10 @@ import AppNavBar from './AppNavBar';
 import { Outlet } from 'react-router-dom';
 import Footer from './Footer';
 
-const Layout = ({joinSocketRoom}) => {
+const Layout = () => {
     return (
        <>
-            <AppNavBar joinSocketRoom = {joinSocketRoom}/>
+            <AppNavBar />
             <Footer />
             <Outlet />
         </>

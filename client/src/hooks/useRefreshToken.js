@@ -1,10 +1,15 @@
 import axios from '../api/axios';
 import useAuth from './useAuth';
+// import { SocketContext } from '../context/SocketProvider';
+// import { useContext } from 'react';
+
+// const socket = useContext(SocketContext);
 
 const useRefreshToken = () => {
     const { setAuth } = useAuth();
 
     const refresh = async () => {
+        console.log('calling axios for refresh token')
         const response = await axios.get('/refresh', {
             withCredentials: true
         });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import Card from 'react-bootstrap/Card'
 import Container from 'react-bootstrap/Container'
@@ -11,8 +11,10 @@ import Modal from 'react-bootstrap/Modal'
 import useAuth from '../hooks/useAuth'
 import Table from 'react-bootstrap/Table'
 import { useNavigate } from 'react-router-dom'
+import { SocketContext} from './../context/SocketProvider'
 
-const Landing = ({testSend}) => {
+
+const Landing = () => {
     const [showSubmitOrderModal, setSubmitOrderModal] = useState(false);
     const navigate = useNavigate()
     const [menuItems, setMenuItems] = useState({})
@@ -21,6 +23,11 @@ const Landing = ({testSend}) => {
     const handleSubmitOrderModalClose = () => setSubmitOrderModal(false);
     const {auth } = useAuth()
 
+    const socket = useContext(SocketContext); 
+
+
+
+    
     useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();
@@ -53,6 +60,10 @@ const Landing = ({testSend}) => {
             controller.abort();
         }
     }, [])
+
+
+
+
 
     //Generates the cards taht contain the menu items
     const createCard = (menuItem) =>{
@@ -174,6 +185,12 @@ const Landing = ({testSend}) => {
                     )
             }
         })
+    }
+
+
+    const testSend = () => {
+        socket.emit("message from client", "world");
+        console.log('send test')
     }
 
     return (

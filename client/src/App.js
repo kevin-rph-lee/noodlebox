@@ -13,25 +13,21 @@ import Orders from './components/Orders';
 
 
 
-function App({socket}) {
+function App({}) {
 
-  const testSend = () => {
-    socket.emit("message from client", "world");
-    console.log('send test')
-  }
 
-  const joinSocketRoom = (userID) => {
-    socket.emit("join", userID);
-    // console.log('joiniong room')
-  }
+  // const joinSocketRoom = (userID) => {
+  //   socket.emit("join", userID);
+  //   // console.log('joiniong room')
+  // }
 
 
   return (
     <Routes>
 
       <Route element = {<PersistLogin />}>
-        <Route path="/" element={<Layout joinSocketRoom = {joinSocketRoom} />}>
-          <Route index element={<Landing testSend={testSend}/>} />
+        <Route path="/" element={<Layout/>}>
+          <Route index element={<Landing />} />
         <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
