@@ -57,6 +57,11 @@ const AppNavBar = () => {
     console.log('joiniong room')
   }
 
+
+  socket.on('test', (msg) =>{
+    console.log(msg)
+  })
+
   //Clear all forms in the modal
   const clearForms = () => {
     Array.from(document.querySelectorAll('input')).forEach(

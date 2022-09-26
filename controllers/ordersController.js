@@ -1,7 +1,9 @@
 const db = require('../lib/dbConnect')
+const io = require("../utils/socketio.js").getIO();
 
 //Get orders owned by a single user
 const getOrders = async (req, res) => {
+
 
     //Find the userID
     let SQLStringGetUserID = `SELECT id FROM USERS WHERE user_name = $1;`
@@ -73,6 +75,10 @@ const createOrder = async (req, res) => {
     }
 
     res.sendStatus(200)
+}
+
+const completeOrder = async (req, res) => {
+
 }
 
 module.exports = { createOrder, getOrders }
