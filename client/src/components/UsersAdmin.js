@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form'
 import { ToastContainer, toast } from 'react-toastify'
 
 
-const Admin = () => {
+const UsersAdmin = () => {
 
 
 
@@ -144,4 +144,4 @@ const Admin = () => {
     );
 };
 
-export default Admin;
+export default UsersAdmin;

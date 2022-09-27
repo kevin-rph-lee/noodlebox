@@ -4,7 +4,7 @@ import Unauthorized from './components/Unauthorized';
 import {Route, Routes } from 'react-router-dom';
 import Layout from "./components/Layout";
 import Profile from './components/Profile';
-import Admin from './components/Admin';
+import UsersAdmin from './components/UsersAdmin';
 import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
@@ -33,8 +33,8 @@ function App({}) {
           </Route>
 
           <Route element ={<RequireAuth allowedRoles={['admin']}/>}>
-            <Route path="/admin">
-              <Route index element={<Admin />} />
+            <Route path="/users/admin">
+              <Route index element={<UsersAdmin />} />
             </Route>
             <Route path="/orders/Admin">
               <Route index element={<OrdersAdmin />} />

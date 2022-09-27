@@ -164,7 +164,7 @@ const AppNavBar = () => {
       <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
       <Dropdown.Item key={'orders'} onClick={()=>{navigate('/orders')}}>Orders</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
-      <Dropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>User Admin</Dropdown.Item>,
+      <Dropdown.Item key={'admin'} onClick={()=>{navigate('/users/admin')}}>User Admin</Dropdown.Item>,
       <Dropdown.Item key={'ordersAdmin'} onClick={()=>{navigate('/orders/admin')}}>Orders Admin</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]

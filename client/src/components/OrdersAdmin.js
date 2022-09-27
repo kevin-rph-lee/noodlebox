@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
+import Button from 'react-bootstrap/Button'
 
 
 const OrdersAdmin = () => {
@@ -96,6 +97,7 @@ const OrdersAdmin = () => {
                             </tbody>
                         </Table>
                         <span>Order total: <b>${calculateTotal(order.orderedItems)}</b> </span>
+                        <Button>Test</Button>
                     </div>
                     )
                 )   :
