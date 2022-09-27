@@ -7,9 +7,29 @@ const verifyRoles = require('../middleware/verifyRoles');
 
 module.exports = () => {
 
-  //Get order
+  //Get order for a single user
   router.route('/')
     .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getOrders)  
+
+  //Get order for a single user
+  router.route('/completed')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getCompletedOrders) 
+
+  //Get order for a single user
+  router.route('/pending')
+    .get(verifyJWT, verifyRoles('user', 'admin'),ordersController.getPendingOrders)     
+
+  //Get all orders
+  router.route('/all')
+    .get(verifyJWT, verifyRoles('admin'),ordersController.getAllOrders)  
+
+  //Get all completed orders
+  router.route('/completed/all')
+    .get(verifyJWT, verifyRoles('admin'),ordersController.getAllCompletedOrders)  
+
+  //Get all completed orders
+  router.route('/pending/all')
+    .get(verifyJWT, verifyRoles('admin'),ordersController.getAllPendingOrders)  
 
   //Create order
   router.route('/')

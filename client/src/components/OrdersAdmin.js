@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 
 
-const Orders = () => {
+const OrdersAdmin = () => {
     const [pendingOrders, setPendingOrders] = useState([])
     const [completedOrders, setCompletedOrders] = useState([])
 
@@ -18,13 +18,13 @@ const Orders = () => {
         //Get the orders and ordered items from the server
         const getOrders = async () => {
             try {
-                const pendingOrdersResponse = await axiosPrivate.get('/orders/pending', {
+                const pendingOrdersResponse = await axiosPrivate.get('/orders/pending/all', {
                     signal: controller.signal
                 });
-                const completedOrdersReponse = await axiosPrivate.get('/orders/completed')
+                const completedOrdersReponse = await axiosPrivate.get('/orders/completed/all')
 
                 setCompletedOrders(completedOrdersReponse.data)
-                
+
 
                 isMounted && setPendingOrders(pendingOrdersResponse.data);
 
@@ -80,6 +80,8 @@ const Orders = () => {
                 pendingOrders.map((order, i) =>(
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
+                        <div>Order Owner Username: {order.user_name}</div>
+                        <div>Order Owner ID: {order.user_id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -103,6 +105,8 @@ const Orders = () => {
                 completedOrders.map((order, i) =>(
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
+                        <div>Order Owner Username: {order.user_name}</div>
+                        <div>Order Owner ID: {order.user_id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -126,4 +130,4 @@ const Orders = () => {
     );
 };
 
-export default Orders;
+export default OrdersAdmin;

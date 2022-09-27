@@ -9,18 +9,11 @@ import Landing from './components/Landing';
 import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
-
+import OrdersAdmin from './components/OrdersAdmin';
 
 
 
 function App({}) {
-
-
-  // const joinSocketRoom = (userID) => {
-  //   socket.emit("join", userID);
-  //   // console.log('joiniong room')
-  // }
-
 
   return (
     <Routes>
@@ -42,6 +35,9 @@ function App({}) {
           <Route element ={<RequireAuth allowedRoles={['admin']}/>}>
             <Route path="/admin">
               <Route index element={<Admin />} />
+            </Route>
+            <Route path="/orders/Admin">
+              <Route index element={<OrdersAdmin />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
