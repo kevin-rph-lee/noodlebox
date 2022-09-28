@@ -46,9 +46,5 @@ module.exports = {
           throw new Error("Can't get io instance before calling .init()");
        }
        return io;
-   },
-   notifyOrderCompleted: (userID) => {
-    console.log('Sending message to room ' + userID)
-    socket.to(userID).emit('message to client', 'enjoy the game')
    }
 }

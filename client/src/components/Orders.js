@@ -62,16 +62,6 @@ const Orders = () => {
         return total
     }
 
-    const checkFinishedOrders = (orders) =>{
-        for(let i = 0; i < orders.length; i++){
-            if(orders[i].order_status){
-                return true
-            }
-        }
-        return false
-    }
-
-
     return (
         <>
             <div className='main'>

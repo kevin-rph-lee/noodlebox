@@ -3,6 +3,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
+import { ToastContainer, toast } from 'react-toastify'
 
 
 const OrdersAdmin = () => {
@@ -63,15 +64,15 @@ const OrdersAdmin = () => {
         return total
     }
 
-    const checkFinishedOrders = (orders) =>{
-        for(let i = 0; i < orders.length; i++){
-            if(orders[i].order_status){
-                return true
-            }
+    const completeOrder = async (orderID) =>{
+        try{
+            await axiosPrivate.post('/orders/complete', {orderID});
+            toast.success('Order completed for OrderID :' + orderID)
+        } catch (err)  {
+            toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
         }
-        return false
+        
     }
-
 
     return (
         <>
@@ -83,6 +84,7 @@ const OrdersAdmin = () => {
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
                         <div>Order Owner Username: {order.user_name}</div>
                         <div>Order Owner ID: {order.user_id}</div>
+                        <div>Order ID: {order.id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -96,8 +98,10 @@ const OrdersAdmin = () => {
                                 {renderOrderedItems(order.orderedItems)}
                             </tbody>
                         </Table>
-                        <span>Order total: <b>${calculateTotal(order.orderedItems)}</b> </span>
-                        <Button>Test</Button>
+                        <div>Order total: <b>${calculateTotal(order.orderedItems)}</b> </div>
+                        <Button id={order.id} className = 'complete-order-button' onClick={(e)=>{
+                                    completeOrder(e.target.id)
+                                    }}>Complete Order</Button>
                     </div>
                     )
                 )   :
@@ -109,6 +113,7 @@ const OrdersAdmin = () => {
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
                         <div>Order Owner Username: {order.user_name}</div>
                         <div>Order Owner ID: {order.user_id}</div>
+                        <div>Order ID: {order.id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -128,6 +133,7 @@ const OrdersAdmin = () => {
                 )   :
             <p className='empty-orders'>No Completed orders</p>}
             </div>
+            <ToastContainer position='top-left' />
         </>
     );
 };

@@ -31,9 +31,15 @@ module.exports = () => {
   router.route('/pending/all')
     .get(verifyJWT, verifyRoles('admin'),ordersController.getAllPendingOrders)  
 
+  //Complete order
+  router.route('/complete')
+    .post(verifyJWT, verifyRoles('user', 'admin'), ordersController.completeOrder)  
+
   //Create order
   router.route('/')
     .post(verifyJWT, verifyRoles('user', 'admin'), ordersController.createOrder)  
+
+
   
   return router;
 };
