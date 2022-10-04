@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
-
+import { SocketContext} from './../context/SocketProvider'
 
 const Orders = () => {
     const [pendingOrders, setPendingOrders] = useState([])
@@ -11,7 +11,9 @@ const Orders = () => {
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
     const location = useLocation()
-    
+    const socket = useContext(SocketContext); 
+
+
     useEffect(() => {
         let isMounted = true;
         const controller = new AbortController();
@@ -40,6 +42,10 @@ const Orders = () => {
             controller.abort();
         }
     }, [])
+
+
+
+    
 
     //Render the ordered items within the order cart
     const renderOrderedItems = (orderedItems) => {

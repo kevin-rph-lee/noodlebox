@@ -236,21 +236,22 @@ const getAllPendingOrders = async (req, res) => {
 
 //Complete an order
 const completeOrder = async (req, res) => {
-    console.log(req.body.orderID)
     let SQLStringGetUserID = `SELECT * FROM orders AS o INNER JOIN users AS u ON o.user_ID = u.id WHERE o.id = $1;`
     let valuesGetUserID = [req.body.orderID]    
     const userIDData= await db.query(SQLStringGetUserID, valuesGetUserID)
-    console.log(userIDData['rows'])
+    const userID = userIDData['rows'][0]['user_id']
     if(userIDData['rows'].length === 0){
         res.status(500).send('Database error!')
         return
     }
 
-    let SQLStringCompleteOrder = `UPDATE orders SET order_status = 'completed' WHERE id = $1;`
-    let valuesCompleteOrder=  [req.body.orderID]
-    await db.query(SQLStringCompleteOrder, valuesCompleteOrder)
+    // let SQLStringCompleteOrder = `UPDATE orders SET order_status = 'completed' WHERE id = $1;`
+    // let valuesCompleteOrder=  [req.body.orderID]
+    // await db.query(SQLStringCompleteOrder, valuesCompleteOrder)
+    console.log('completing order!')
+    io.to(userID).emit('complete order', "test");
 
-    
+
 
     res.sendStatus(200)
 }

@@ -17,6 +17,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import { SocketContext} from './../context/SocketProvider'
 
+
 const AppNavBar = () => {
   
   
@@ -47,20 +48,21 @@ const AppNavBar = () => {
     }
   }, [auth.userName])
 
+  useEffect(() => {
+    socket.on('complete order', (recv) =>{
+      console.log('recieved msg')
+      console.log(recv)
+    })
+  }, [socket])
+
+
   const joinSocketRoom = (userID) => {
     socket.emit("join", userID);
-    console.log('joiniong room')
   }
   
   const leaveSocketRoom = (userID) => {
     socket.emit("join", userID);
-    console.log('joiniong room')
   }
-
-
-  socket.on('test', (msg) =>{
-    console.log(msg)
-  })
 
   //Clear all forms in the modal
   const clearForms = () => {

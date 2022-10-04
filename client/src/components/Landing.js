@@ -11,7 +11,7 @@ import Modal from 'react-bootstrap/Modal'
 import useAuth from '../hooks/useAuth'
 import Table from 'react-bootstrap/Table'
 import { useNavigate } from 'react-router-dom'
-import { SocketContext} from './../context/SocketProvider'
+// import { SocketContext} from './../context/SocketProvider'
 
 
 const Landing = () => {
@@ -23,7 +23,7 @@ const Landing = () => {
     const handleSubmitOrderModalClose = () => setSubmitOrderModal(false);
     const {auth } = useAuth()
 
-    const socket = useContext(SocketContext); 
+    // const socket = useContext(SocketContext); 
 
 
 
@@ -188,10 +188,10 @@ const Landing = () => {
     }
 
 
-    const testSend = () => {
-        socket.emit("message from client", "world");
-        console.log('send test')
-    }
+    // const testSend = () => {
+    //     socket.emit("message from client", "world");
+    //     console.log('send test')
+    // }
 
     return (
         <>
@@ -200,7 +200,7 @@ const Landing = () => {
                     <h1>Menu</h1>
                     <Button className='title-button' variant='primary' onClick={openCart}>Submit order!</Button>
                     <Button className='title-button' variant='primary' onClick={navigateToOrders}>See orders</Button>
-                    <Button className='title-button' variant='primary' onClick={testSend}>Send test Websocket message</Button>
+                    {/* <Button className='title-button' variant='primary' onClick={testSend}>Send test Websocket message</Button> */}
 
                 </div>
                 <h2>Noodles</h2>
