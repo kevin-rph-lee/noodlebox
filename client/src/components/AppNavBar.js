@@ -2,7 +2,7 @@ import Navbar from 'react-bootstrap/Navbar'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Container from 'react-bootstrap/Container'
 import Modal from 'react-bootstrap/Modal'
-import {useState } from 'react'
+import {useState, useContext, useEffect } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
@@ -15,6 +15,7 @@ import { faGear } from '@fortawesome/free-solid-svg-icons'
 import Nav from 'react-bootstrap/Nav'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
+import { SocketContext} from './../context/SocketProvider'
 
 const AppNavBar = () => {
   
@@ -34,6 +35,41 @@ const AppNavBar = () => {
   const handleShowLoginModal = () => setShowLoginModal(true);
 
   const navigate = useNavigate()
+
+  const socket = useContext(SocketContext); 
+
+  //When the auth changes (either through a login or a token refresh), join or leave the room
+  useEffect(() => {
+    if(!auth.userName){
+      leaveSocketRoom(auth.userID)
+    } else {
+      joinSocketRoom(auth.userID)
+    }
+  }, [auth.userName])
+
+  //Joins the socket room based off userID
+  const joinSocketRoom = (userID) => {
+    socket.emit("join", userID);
+  }
+  
+  //Leaves the socket room based off userID
+  const leaveSocketRoom = (userID) => {
+    socket.emit("join", userID);
+  }
+
+
+  useEffect(() => {
+    //Sending notification that the order is done
+    const sendNotification =  (orderID) =>{
+      toast.info(`Order Number ${orderID} is ready for pickup!`, {theme:'colored', autoClose: false})
+    }
+    
+    socket.on('complete order', sendNotification)
+  
+    return () => {
+      socket.off('complete order', sendNotification)
+    }
+  }, [socket])   
 
   //Clear all forms in the modal
   const clearForms = () => {
@@ -134,7 +170,8 @@ const AppNavBar = () => {
       <Dropdown.Item key={'home'} onClick={()=>{navigate('/')}}>Home</Dropdown.Item>,
       <Dropdown.Item key={'orders'} onClick={()=>{navigate('/orders')}}>Orders</Dropdown.Item>,
       <Dropdown.Item key={'profile'} onClick={()=>{navigate('/users')}}>Profile</Dropdown.Item>,
-      <Dropdown.Item key={'admin'} onClick={()=>{navigate('/admin')}}>Admin</Dropdown.Item>,
+      <Dropdown.Item key={'admin'} onClick={()=>{navigate('/users/admin')}}>User Admin</Dropdown.Item>,
+      <Dropdown.Item key={'ordersAdmin'} onClick={()=>{navigate('/orders/admin')}}>Orders Admin</Dropdown.Item>,
       <Dropdown.Item key={'logout'} onClick={handleLogout}>Logout</Dropdown.Item>
     ]
   } else if(auth.role === 'user'){
@@ -168,7 +205,7 @@ const AppNavBar = () => {
           </DropdownButton>
         </Nav>
       </Container>
-      <ToastContainer position='top-left' />
+      <ToastContainer position='top-left' pauseOnFocusLoss={false} />
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>
