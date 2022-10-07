@@ -10,23 +10,8 @@ import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
 import OrdersAdmin from './components/OrdersAdmin';
-import {useContext, useState, useEffect, useRef} from 'react'
-// import {io} from "socket.io-client";
-import useAuth from './hooks/useAuth'
-
 
 function App({}) {
-
-  // const { setAuth, auth } = useAuth()
-
-  // const [socket, setSocket] = useState(null);
-  // useEffect(() => {
-  //   const newSocket = io('/')
-  //   setSocket(newSocket)
-  // }, [])
-
-
-
 
   return (
     <Routes>
@@ -34,7 +19,7 @@ function App({}) {
       <Route element = {<PersistLogin />}>
         <Route path="/" element={<Layout />}>
           <Route index element={<Landing />} />
-        <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="unauthorized" element={<Landing />} />
 
           <Route element ={<RequireAuth allowedRoles={['user', 'admin']}/>}>
             <Route path="/users">
