@@ -236,7 +236,10 @@ const getAllPendingOrders = async (req, res) => {
 
 //Complete an order
 const completeOrder = async (req, res) => {
+
     const orderID = req.body.orderID
+
+    //Getting owner userID
     let SQLStringGetUserID = `SELECT * FROM orders AS o INNER JOIN users AS u ON o.user_ID = u.id WHERE o.id = $1;`
     let valuesGetUserID = [orderID]    
     const userIDData= await db.query(SQLStringGetUserID, valuesGetUserID)
@@ -245,14 +248,14 @@ const completeOrder = async (req, res) => {
         res.status(500).send('Database error!')
         return
     }
+    
+    //Update DB to set order status to completed
+    let SQLStringCompleteOrder = `UPDATE orders SET order_status = 'completed' WHERE id = $1;`
+    let valuesCompleteOrder=  [req.body.orderID]
+    await db.query(SQLStringCompleteOrder, valuesCompleteOrder)
 
-    // let SQLStringCompleteOrder = `UPDATE orders SET order_status = 'completed' WHERE id = $1;`
-    // let valuesCompleteOrder=  [req.body.orderID]
-    // await db.query(SQLStringCompleteOrder, valuesCompleteOrder)
-    console.log('completing order!')
+    //Sending socketio message down to the specific user who owns the order to complete the order on the front end
     io.to(userID).emit('complete order', orderID);
-
-
 
     res.sendStatus(200)
 }

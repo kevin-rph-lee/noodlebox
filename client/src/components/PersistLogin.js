@@ -15,9 +15,9 @@ const PersistLogin = () => {
 
         const verifyRefreshToken = async () => {
             try {
-                console.log('Refreshing token...1')
+                // console.log('Refreshing token...1')
                 await refresh();
-                console.log('Token ' + auth.accessToken )
+                // console.log('Token ' + auth.accessToken )
             }
             catch (err) {
                 console.error(err);

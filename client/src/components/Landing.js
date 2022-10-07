@@ -187,12 +187,6 @@ const Landing = () => {
         })
     }
 
-
-    // const testSend = () => {
-    //     socket.emit("message from client", "world");
-    //     console.log('send test')
-    // }
-
     return (
         <>
             <div className='main'>

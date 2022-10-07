@@ -15,6 +15,7 @@ const Orders = () => {
 
 
     useEffect(() => {
+
         let isMounted = true;
         const controller = new AbortController();
         //Get the orders and ordered items from the server
@@ -27,8 +28,6 @@ const Orders = () => {
 
                 await setCompletedOrders(completedOrdersReponse.data)
                 
-                
-
                 isMounted && setPendingOrders(pendingOrdersResponse.data);
 
             } catch (err) {
@@ -48,6 +47,7 @@ const Orders = () => {
 
     useEffect(() => {
 
+        //Removes an order from pending state and adds it to the completed orders
         const completeOrderState =  (orderID) =>{
             //Converts the OrderID into an int
             const orderIDInt = Number(orderID)

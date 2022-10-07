@@ -17,9 +17,7 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import { SocketContext} from './../context/SocketProvider'
 
-
 const AppNavBar = () => {
-  
   
   const { setAuth, auth } = useAuth()
 
@@ -40,6 +38,7 @@ const AppNavBar = () => {
 
   const socket = useContext(SocketContext); 
 
+  //When the auth changes (either through a login or a token refresh), join or leave the room
   useEffect(() => {
     if(!auth.userName){
       leaveSocketRoom(auth.userID)
@@ -48,13 +47,12 @@ const AppNavBar = () => {
     }
   }, [auth.userName])
 
-
-
-
+  //Joins the socket room based off userID
   const joinSocketRoom = (userID) => {
     socket.emit("join", userID);
   }
   
+  //Leaves the socket room based off userID
   const leaveSocketRoom = (userID) => {
     socket.emit("join", userID);
   }
@@ -63,8 +61,7 @@ const AppNavBar = () => {
   useEffect(() => {
     //Sending notification that the order is done
     const sendNotification =  (orderID) =>{
-      toast.info('Order Number 7 is ready for pickup!', {theme:'colored', autoClose: false})
-
+      toast.info(`Order Number ${orderID} is ready for pickup!`, {theme:'colored', autoClose: false})
     }
     
     socket.on('complete order', sendNotification)
@@ -112,7 +109,6 @@ const AppNavBar = () => {
       const response = await axios.post('/users/register', {username: registerUsername, password: registerPassword}, {withCredentials: true})
       const responseData= response.data
       setAuth(responseData)
-      // joinSocketRoom(responseData.userID)
       toast.success('Registered successfully', {theme:'colored'})
       handleCloseRegistrationModal()
       
@@ -132,8 +128,6 @@ const AppNavBar = () => {
       //Sets user info within the auth state
       setAuth(responseData)
       toast.success('Logged in successfully', {theme:'colored'})
-      console.log(response)
-      // joinSocketRoom(responseData.userID)
       handleCloseLoginModal() 
       navigate('/')
 
@@ -201,7 +195,7 @@ const AppNavBar = () => {
         <Nav>
           {auth.userName ? 
                     <Navbar.Text onClick={()=>{navigate('/users')}}>
-                      User: <a className='username-span'>{auth.userName} {auth.userID}</a>
+                      User: <a className='username-span'>{auth.userName}</a>
                     </Navbar.Text> :
                     <Navbar.Text>
                      User: <a className='username-span'>Guest</a>

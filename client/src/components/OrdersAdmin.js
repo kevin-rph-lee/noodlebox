@@ -27,7 +27,6 @@ const OrdersAdmin = () => {
 
                 setCompletedOrders(completedOrdersReponse.data)
 
-
                 isMounted && setPendingOrders(pendingOrdersResponse.data);
 
             } catch (err) {
@@ -64,9 +63,30 @@ const OrdersAdmin = () => {
         return total
     }
 
+    //Removes an order from pending state and adds it to the completed orders
+    const completeOrderState =  (orderID) =>{
+        //Converts the OrderID into an int
+        const orderIDInt = Number(orderID)
+
+        //Grabbing the order from pending orders to be put into the completedOrders state
+        const order = (pendingOrders.filter(order => order.id === orderIDInt)[0])
+        
+        //Removing order that is being completed from pendingOrders
+        setPendingOrders(pendingOrder =>
+            pendingOrder.filter(pendingOrder => {
+                return pendingOrder.id !== orderIDInt;
+            }),
+        );
+
+        //Adding the formally pending order to completed orders
+        setCompletedOrders(completedOrders => [...completedOrders, order])
+
+    }
+
     const completeOrder = async (orderID) =>{
         try{
             await axiosPrivate.post('/orders/complete', {orderID});
+            completeOrderState(orderID)
             toast.success('Order completed for OrderID :' + orderID, {theme: 'colored'})
         } catch (err)  {
             toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
