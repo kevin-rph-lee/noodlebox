@@ -25,7 +25,8 @@ const Orders = () => {
                 });
                 const completedOrdersReponse = await axiosPrivate.get('/orders/completed')
 
-                setCompletedOrders(completedOrdersReponse.data)
+                await setCompletedOrders(completedOrdersReponse.data)
+                
                 
 
                 isMounted && setPendingOrders(pendingOrdersResponse.data);
@@ -41,11 +42,37 @@ const Orders = () => {
             isMounted = false;
             controller.abort();
         }
+
+        
     }, [])
 
+    useEffect(() => {
 
+        const completeOrderState =  (orderID) =>{
+            //Converts the OrderID into an int
+            const orderIDInt = Number(orderID)
 
-    
+            //Grabbing the order from pending orders to be put into the completedOrders state
+            const order = (pendingOrders.filter(order => order.id === orderIDInt)[0])
+            
+            //Removing order that is being completed from pendingOrders
+            setPendingOrders(pendingOrder =>
+                pendingOrder.filter(pendingOrder => {
+                    return pendingOrder.id !== orderIDInt;
+                }),
+            );
+
+            //Adding the formally pending order to completed orders
+            setCompletedOrders(completedOrders => [...completedOrders, order])
+
+        }
+        
+        socket.on('complete order', completeOrderState)
+      
+        return () => {
+          socket.off('complete order', completeOrderState)
+        }
+      }, [socket, pendingOrders])   
 
     //Render the ordered items within the order cart
     const renderOrderedItems = (orderedItems) => {
@@ -76,6 +103,7 @@ const Orders = () => {
                 pendingOrders.map((order, i) =>(
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
+                        <div>Order ID: {order.id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>
@@ -99,6 +127,7 @@ const Orders = () => {
                 completedOrders.map((order, i) =>(
                     <div className= 'order' key={order.id}>
                         <span className='order-title'>Order Submitted: {order.order_created_datetime}</span>
+                        <div>Order ID: {order.id}</div>
                         <Table striped bordered hover>
                             <thead>
                                 <tr key='Title'>

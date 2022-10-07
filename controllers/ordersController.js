@@ -236,8 +236,9 @@ const getAllPendingOrders = async (req, res) => {
 
 //Complete an order
 const completeOrder = async (req, res) => {
+    const orderID = req.body.orderID
     let SQLStringGetUserID = `SELECT * FROM orders AS o INNER JOIN users AS u ON o.user_ID = u.id WHERE o.id = $1;`
-    let valuesGetUserID = [req.body.orderID]    
+    let valuesGetUserID = [orderID]    
     const userIDData= await db.query(SQLStringGetUserID, valuesGetUserID)
     const userID = userIDData['rows'][0]['user_id']
     if(userIDData['rows'].length === 0){
@@ -249,7 +250,7 @@ const completeOrder = async (req, res) => {
     // let valuesCompleteOrder=  [req.body.orderID]
     // await db.query(SQLStringCompleteOrder, valuesCompleteOrder)
     console.log('completing order!')
-    io.to(userID).emit('complete order', "test");
+    io.to(userID).emit('complete order', orderID);
 
 
 

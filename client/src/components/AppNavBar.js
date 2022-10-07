@@ -48,12 +48,7 @@ const AppNavBar = () => {
     }
   }, [auth.userName])
 
-  useEffect(() => {
-    socket.on('complete order', (recv) =>{
-      console.log('recieved msg')
-      console.log(recv)
-    })
-  }, [socket])
+
 
 
   const joinSocketRoom = (userID) => {
@@ -63,6 +58,21 @@ const AppNavBar = () => {
   const leaveSocketRoom = (userID) => {
     socket.emit("join", userID);
   }
+
+
+  useEffect(() => {
+    //Sending notification that the order is done
+    const sendNotification =  (orderID) =>{
+      toast.info('Order Number 7 is ready for pickup!', {theme:'colored', autoClose: false})
+
+    }
+    
+    socket.on('complete order', sendNotification)
+  
+    return () => {
+      socket.off('complete order', sendNotification)
+    }
+  }, [socket])   
 
   //Clear all forms in the modal
   const clearForms = () => {
@@ -201,7 +211,7 @@ const AppNavBar = () => {
           </DropdownButton>
         </Nav>
       </Container>
-      <ToastContainer position='top-left' />
+      <ToastContainer position='top-left' pauseOnFocusLoss={false} />
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>

@@ -67,7 +67,7 @@ const OrdersAdmin = () => {
     const completeOrder = async (orderID) =>{
         try{
             await axiosPrivate.post('/orders/complete', {orderID});
-            toast.success('Order completed for OrderID :' + orderID)
+            toast.success('Order completed for OrderID :' + orderID, {theme: 'colored'})
         } catch (err)  {
             toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
         }
@@ -133,7 +133,7 @@ const OrdersAdmin = () => {
                 )   :
             <p className='empty-orders'>No Completed orders</p>}
             </div>
-            <ToastContainer position='top-left' />
+            <ToastContainer position='top-left' pauseOnFocusLoss={false} />
         </>
     );
 };
