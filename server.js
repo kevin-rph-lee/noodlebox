@@ -79,7 +79,12 @@ app.use(express.json()); // => allows us to access the req.body
 //middleware for cookies
 app.use(cookieParser());
 
-
+if (process.env.NODE_ENV === 'production') {
+  //server static content
+  //npm run build
+  // app.use(express.static(path.join(__dirname, 'client/build')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
+}
 
 console.log(__dirname);
 console.log(path.join(__dirname, 'client/build'));
@@ -102,13 +107,6 @@ app.get('*', (req, res) => {
   // res.sendFile(path.join(__dirname, '/client/build/index.html'));
   res.sendFile(path.join(__dirname, '/app/client/build/index.html'));
 });
-
-if (process.env.NODE_ENV === 'production') {
-  //server static content
-  //npm run build
-  // app.use(express.static(path.join(__dirname, 'client/build')));
-  app.use(express.static(path.join(__dirname, 'client/build')));
-}
 
 
 server.listen(PORT);
