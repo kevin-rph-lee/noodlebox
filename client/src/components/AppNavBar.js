@@ -40,8 +40,13 @@ const AppNavBar = () => {
 
   //When the auth changes (either through a login or a token refresh), join or leave the room
   useEffect(() => {
+
+    //Logout leaves the rooms
     if(!auth.userName){
       leaveSocketRoom(auth.userID)
+      leaveSocketRoom('admin')
+     } else if(auth.role === 'admin') {
+      joinSocketRoom('admin')
     } else {
       joinSocketRoom(auth.userID)
     }
@@ -54,20 +59,29 @@ const AppNavBar = () => {
   
   //Leaves the socket room based off userID
   const leaveSocketRoom = (userID) => {
-    socket.emit("join", userID);
+    socket.emit("leave", userID);
   }
 
 
   useEffect(() => {
-    //Sending notification that the order is done
-    const sendNotification =  (orderID) =>{
+    //Sending notification that a pending order is now complete (only the owner of the order should get this)
+    const sendPickupNotification =  (orderID) =>{
       toast.info(`Order Number ${orderID} is ready for pickup!`, {theme:'colored', autoClose: false})
     }
     
-    socket.on('complete order', sendNotification)
+    //Sending notification of new order (only admins should get it)
+    const sendNewOrderNotification =  (newOrder) =>{
+      if(auth.role === 'admin'){
+        toast.info(`New Order ${newOrder.id}`, {theme:'colored', autoClose: false})
+      }
+    }
+
+    socket.on('complete order', sendPickupNotification)
+    socket.on('new order', sendNewOrderNotification)
   
     return () => {
-      socket.off('complete order', sendNotification)
+      socket.off('complete order', sendPickupNotification)
+      socket.off('new order', sendNewOrderNotification)
     }
   }, [socket])   
 

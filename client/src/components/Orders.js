@@ -28,6 +28,9 @@ const Orders = () => {
 
                 await setCompletedOrders(completedOrdersReponse.data)
                 
+                console.log(pendingOrdersResponse.data)
+                console.log(completedOrdersReponse.data)
+
                 isMounted && setPendingOrders(pendingOrdersResponse.data);
 
             } catch (err) {
@@ -94,6 +97,7 @@ const Orders = () => {
         }
         return total
     }
+
 
     return (
         <>

@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { ToastContainer, toast } from 'react-toastify'
-
+import { SocketContext} from './../context/SocketProvider'
 
 const OrdersAdmin = () => {
     const [pendingOrders, setPendingOrders] = useState([])
     const [completedOrders, setCompletedOrders] = useState([])
+    const socket = useContext(SocketContext); 
 
     const axiosPrivate = useAxiosPrivate()
     const navigate = useNavigate()
@@ -41,6 +42,20 @@ const OrdersAdmin = () => {
             controller.abort();
         }
     }, [])
+
+    useEffect(() => {
+
+        //Sending notification of new order (only admins should get it)
+        const addNewPendingOrder =  (newOrder) =>{
+            setPendingOrders(pendingOrders => [ newOrder, ...pendingOrders])
+        }
+    
+        socket.on('new order', addNewPendingOrder)
+      
+        return () => {
+          socket.off('new order', addNewPendingOrder)
+        }
+      }, [socket])   
 
     //Render the ordered items within the order cart
     const renderOrderedItems = (orderedItems) => {
@@ -83,6 +98,7 @@ const OrdersAdmin = () => {
 
     }
 
+    //Sends axios request to complete order and then updates the state to move the study from pending orders state to completed
     const completeOrder = async (orderID) =>{
         try{
             await axiosPrivate.post('/orders/complete', {orderID});
@@ -91,7 +107,6 @@ const OrdersAdmin = () => {
         } catch (err)  {
             toast.error(`Error! ${err.response.data}`, {theme: 'colored'})
         }
-        
     }
 
     return (

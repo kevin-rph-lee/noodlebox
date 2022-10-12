@@ -14,11 +14,12 @@ module.exports = {
 
         socket.on("join", (userID) => {
             socket.join(userID)
-            // console.log('Rooms:')
+            // console.log('Joining: ' + userID)
             // console.log(socket.rooms)
         });
 
         socket.on("leave", (userID) => {
+            console.log('Leaving ' + userID)
             socket.leave(userID)
             // console.log('Rooms:')
             // console.log(socket.rooms)

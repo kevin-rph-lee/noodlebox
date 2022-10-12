@@ -1,6 +1,22 @@
 const db = require('../lib/dbConnect')
 const io = require("../utils/socketio.js").getIO();
 
+
+//Adding ordered items to orders
+const addOrderedItems = (orders, orderedItems) => { 
+    //Creating an array in the orders object and adding in all of the ordered items
+    for(let i in orders){
+        orders[i]['orderedItems'] = []
+        for(let y in orderedItems['rows']){
+            if(orderedItems['rows'][y].order_id === orders[i]['id']){
+                orders[i]['orderedItems'].push(orderedItems['rows'][y])
+            }
+        }
+        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
+    }
+    return orders
+}
+
 //Get orders owned by a single user
 const getOrders = async (req, res) => {
     //Find the userID
@@ -62,20 +78,9 @@ const getPendingOrders = async (req, res) => {
     const ordersData= await db.query(SQLStringGetOrder, valuesGetOrder)
     const orderedItems = await db.query(SQLStringGetOrderedItems, valuesGetOrderedItems)
 
-    //Reversing the orders to get the newest order first
-    const orders = ordersData['rows']
-    orders.reverse()
+    //Adding ordered items to the orders
+    const orders = addOrderedItems(ordersData['rows'].reverse() , orderedItems)
 
-    //Creating an array in the orders object and adding in all of the ordered items
-    for(let i in orders){
-        orders[i]['orderedItems'] = []
-        for(let y in orderedItems['rows']){
-            if(orderedItems['rows'][y].order_id === orders[i]['id']){
-                orders[i]['orderedItems'].push(orderedItems['rows'][y])
-            }
-        }
-        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
-    }
     res.json(orders)
 }
 
@@ -101,20 +106,9 @@ const getCompletedOrders = async (req, res) => {
     const ordersData= await db.query(SQLStringGetOrder, valuesGetOrder)
     const orderedItems = await db.query(SQLStringGetOrderedItems, valuesGetOrderedItems)
 
-    //Reversing the orders to get the newest order first
-    const orders = ordersData['rows']
-    orders.reverse()
+    //Adding ordered items to the orders
+    const orders = addOrderedItems(ordersData['rows'].reverse() , orderedItems)
 
-    //Creating an array in the orders object and adding in all of the ordered items
-    for(let i in orders){
-        orders[i]['orderedItems'] = []
-        for(let y in orderedItems['rows']){
-            if(orderedItems['rows'][y].order_id === orders[i]['id']){
-                orders[i]['orderedItems'].push(orderedItems['rows'][y])
-            }
-        }
-        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
-    }
     res.json(orders)
 }
 
@@ -149,6 +143,33 @@ const createOrder = async (req, res) => {
         }
     }
 
+    //SQL strings for getting the orders and ordered items
+    let SQLStringGetOrder = `SELECT * FROM orders WHERE id = $1;`
+    let valuesGetOrder = [orderID['rows'][0].id]
+    let SQLStringGetOrderedItems = `SELECT * FROM orders AS o INNER JOIN ordered_items AS oi ON o.id = oi.order_id INNER JOIN menu_items AS mi ON mi.id = oi.menu_item_id WHERE o.id = $1 ORDER BY 1 DESC;`
+    let valuesGetOrderedItems = [orderID['rows'][0].id]
+
+    let order= await db.query(SQLStringGetOrder, valuesGetOrder)
+    const orderedItems = await db.query(SQLStringGetOrderedItems, valuesGetOrderedItems)
+
+    order = order['rows'][0]
+
+    order['orderedItems'] = []
+
+    //Adding ordered items to the new order
+    for(let y in orderedItems['rows']){
+        order['orderedItems'].push(orderedItems['rows'][y])
+    }
+
+    //Reformatting order date
+    order.order_created_datetime = order.order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
+
+    //Adding username
+    order['user_name'] = req.user
+
+    //Sending socketio message to admins with the new order
+    io.to('admin').emit('new order', order);
+
     res.sendStatus(200)
 }
 
@@ -162,20 +183,8 @@ const getAllOrders = async (req, res) => {
     const ordersData= await db.query(SQLStringGetOrder)
     const orderedItems = await db.query(SQLStringGetOrderedItems)
 
-    //Reversing the orders to get the newest order first
-    const orders = ordersData['rows']
-    orders.reverse()
-
-    //Creating an array in the orders object and adding in all of the ordered items
-    for(let i in orders){
-        orders[i]['orderedItems'] = []
-        for(let y in orderedItems['rows']){
-            if(orderedItems['rows'][y].order_id === orders[i]['id']){
-                orders[i]['orderedItems'].push(orderedItems['rows'][y])
-            }
-        }
-        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
-    }
+    //Adding ordered items to the orders
+    const orders = addOrderedItems(ordersData['rows'].reverse() , orderedItems)
     res.json(orders)
 }
 
@@ -190,20 +199,8 @@ const getAllCompletedOrders = async (req, res) => {
     const ordersData= await db.query(SQLStringGetOrder)
     const orderedItems = await db.query(SQLStringGetOrderedItems)
 
-    //Reversing the orders to get the newest order first
-    const orders = ordersData['rows']
-    orders.reverse()
-
-    //Creating an array in the orders object and adding in all of the ordered items
-    for(let i in orders){
-        orders[i]['orderedItems'] = []
-        for(let y in orderedItems['rows']){
-            if(orderedItems['rows'][y].order_id === orders[i]['id']){
-                orders[i]['orderedItems'].push(orderedItems['rows'][y])
-            }
-        }
-        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
-    }
+    //Adding ordered items to the orders
+    const orders = addOrderedItems(ordersData['rows'].reverse() , orderedItems)
     res.json(orders)
 }
 
@@ -217,20 +214,9 @@ const getAllPendingOrders = async (req, res) => {
     const ordersData= await db.query(SQLStringGetOrder)
     const orderedItems = await db.query(SQLStringGetOrderedItems)
 
-    //Reversing the orders to get the newest order first
-    const orders = ordersData['rows']
-    orders.reverse()
+    //Adding ordered items to the orders
+    const orders = addOrderedItems(ordersData['rows'].reverse() , orderedItems)
 
-    //Creating an array in the orders object and adding in all of the ordered items
-    for(let i in orders){
-        orders[i]['orderedItems'] = []
-        for(let y in orderedItems['rows']){
-            if(orderedItems['rows'][y].order_id === orders[i]['id']){
-                orders[i]['orderedItems'].push(orderedItems['rows'][y])
-            }
-        }
-        orders[i].order_created_datetime = orders[i].order_created_datetime.toLocaleString('en-GB', { hour: 'numeric', minute:'numeric', hour12: true, day: 'numeric', weekday: 'short', month: 'short' })
-    }
     res.json(orders)
 }
 
