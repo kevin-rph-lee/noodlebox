@@ -10,11 +10,12 @@ import NotFound from './components/NotFound';
 import PersistLogin from './components/PersistLogin';
 import Orders from './components/Orders';
 import OrdersAdmin from './components/OrdersAdmin';
+import { ToastContainer } from 'react-toastify'
 
 function App({}) {
 
   return (
-    <Routes>
+    <>    <Routes>
       
       <Route element = {<PersistLogin />}>
         <Route path="/" element={<Layout />}>
@@ -40,10 +41,12 @@ function App({}) {
           </Route>
           <Route path="*" element={<NotFound />} />
       </Route>
-
-        
+      
       </Route>
     </Routes>
+    {/* <ToastContainer position='top-left' pauseOnFocusLoss={false} />  */}
+    </>
+
   );
 }
 

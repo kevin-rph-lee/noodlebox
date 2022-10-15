@@ -72,6 +72,7 @@ const AppNavBar = () => {
     //Sending notification of new order (only admins should get it)
     const sendNewOrderNotification =  (newOrder) =>{
       if(auth.role === 'admin'){
+        console.log('recieving new order notification')
         toast.info(`New Order ${newOrder.id}`, {theme:'colored', autoClose: false})
       }
     }
@@ -219,6 +220,7 @@ const AppNavBar = () => {
           </DropdownButton>
         </Nav>
       </Container>
+      {/* <ToastContainer position='top-left' pauseOnFocusLoss={false} /> */}
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>

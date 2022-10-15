@@ -18,6 +18,7 @@ ReactDOM.render(
         </Router>
       </AuthProvider>
     </SocketContext.Provider>
+    <h1>test</h1>
   </React.StrictMode>,
   document.getElementById('root')
 );

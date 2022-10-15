@@ -14,15 +14,15 @@ module.exports = {
 
         socket.on("join", (userID) => {
             socket.join(userID)
-            // console.log('Joining: ' + userID)
-            // console.log(socket.rooms)
+            console.log('Joining: ' + userID)
+            console.log(socket.rooms)
         });
 
         socket.on("leave", (userID) => {
             console.log('Leaving ' + userID)
             socket.leave(userID)
-            // console.log('Rooms:')
-            // console.log(socket.rooms)
+            console.log('Rooms:')
+            console.log(socket.rooms)
         });
 
         //Deincrement the counter when the client disconnects
