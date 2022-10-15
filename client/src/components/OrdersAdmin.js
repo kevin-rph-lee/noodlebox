@@ -3,7 +3,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import { SocketContext} from './../context/SocketProvider'
 
 const OrdersAdmin = () => {
@@ -168,7 +168,6 @@ const OrdersAdmin = () => {
                 )   :
             <p className='empty-orders'>No Completed orders</p>}
             </div>
-            <ToastContainer position='top-left' pauseOnFocusLoss={false} />
         </>
     );
 };

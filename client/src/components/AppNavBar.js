@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import axios from 'axios'
 import useAuth from '../hooks/useAuth'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -219,7 +219,6 @@ const AppNavBar = () => {
           </DropdownButton>
         </Nav>
       </Container>
-      <ToastContainer position='top-left' pauseOnFocusLoss={false} />
     </Navbar>
 
     <Modal show={showRegistrationModal} onHide={handleCloseRegistrationModal}>
